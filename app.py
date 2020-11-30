@@ -141,8 +141,9 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.config["SERVER_NAME"] = "0.0.0.0:443"
-    #app.config["SERVER_PORT"] = 443
+    import os
+    app.config["SERVER_NAME"] = os.getenv('ADDR') or 'localhost'
+    app.config["SERVER_PORT"] = os.getenv('PORT')
     app.run(debug = True)
     
 
