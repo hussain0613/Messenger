@@ -141,7 +141,8 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.config["SERVER_NAME"] = "bcc0613.herokuapp.com"
+    app.config["SERVER_NAME"] = "bcc0613.herokuapp.com:443"
+    app.config["SERVER_PORT"] = 443
     app.run(debug = True)
     
 
