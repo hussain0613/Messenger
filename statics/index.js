@@ -104,16 +104,20 @@ function get(url){
         var last_msg_str = JSON.stringify(msgs[msgs.length - 1])
         if (this.readyState == 4 && this.status == 200){
             new_msgs = JSON.parse(this.responseText)
+            if(new_msgs == '304'){
+                return get(url)
+            }
             for (msg of new_msgs){
                 if(last_msg_str != JSON.stringify(msg))
                 display(msg)
             }
             msgs.push(...new_msgs)
-            get(url)
+            return get(url)
         }
     }
     xhttp.open("GET", url, true)
     xhttp.send()
+    return false;
 }
 
 

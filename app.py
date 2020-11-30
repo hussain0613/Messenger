@@ -99,13 +99,17 @@ def get():
 @app.route('/send/')
 @login_required()
 def send():
-    
+    t = time.time()
     
     print(f"[*] send to client name 1 : {get_device_name(request.environ['HTTP_USER_AGENT'])}, timestamp: {session['timestamp']}")
     
-    while (not messeges) or session['timestamp'] == next(reversed(messeges)):
+    while time.time()-t < 30 and ((not messeges) or session['timestamp'] == next(reversed(messeges))):
         pass
 
+    if time.time()-t => 30:
+        resp = make_response(json.dumps(new_msgs))
+        resp.headers['Content-Type'] = 'application/json'
+        return json.dumps(304)
     if int(session['timestamp']) > 0:
         new_msgs = [messeges[msg] for msg in messeges if msg > session['timestamp']]
     else:
