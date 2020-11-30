@@ -58,16 +58,14 @@ function login(url){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if (this.readyState == 4 && this.status == 200){
+            document.getElementById('div-login').style.visibility='hidden';
+            document.getElementById('messenger').style.visibility='visible';
+            document.getElementById('div-logout').style.visibility='visible';
             get(send_url)
         }
     }
     xhttp.open('POST', url, true);
     xhttp.send(name)
-    
-    document.getElementById('div-login').style.visibility='hidden';
-    document.getElementById('messenger').style.visibility='visible';
-    document.getElementById('div-logout').style.visibility='visible';
-
     return false;
 }
 

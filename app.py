@@ -117,7 +117,7 @@ def send():
     
     print(f"[*] send to client name 2 : {get_device_name(request.environ['HTTP_USER_AGENT'])}, s_ts: {session['timestamp']}, new_msgs: {new_msgs}")
 
-    session['timestamp'] = next(reversed(new_msgs))['timestamp']
+    session['timestamp'] = new_msgs[-1]['timestamp']
     resp = make_response(json.dumps(new_msgs))
     resp.headers['Content-Type'] = 'application/json'
     print(f"[*] send to client name 3 : {get_device_name(request.environ['HTTP_USER_AGENT'])}, s_ts: {session['timestamp']}, new_msgs: {new_msgs}")
