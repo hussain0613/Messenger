@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ajax practice with flask</title>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <script type='text/javascript'>
+            login_url = "{{ url_for('login') }}"
+            send_url = "{{ url_for('send') }}"
+            get_url = "{{ url_for('get') }}"
+            logout_url = "{{ url_for('logout') }}"
+        </script>
+        <script type="text/javascript" src=" {{ url_for('static', filename='index.js') }} "></script>
+    </head>
+    
+    <body onload ="check_logged_in()">
+        <div class = 'container-fluid'>
+            <div id ='div-login' style="visibility: visible;" class = "form-group">
+                <form name ='login-form' method = 'POST' action = "{{ url_for('login') }}" onsubmit="return login(login_url)">
+                    <input type ='text' name='name'>
+                    <input type = 'submit' value = 'login'>
+                </form>
+            </div>
+
+            <div class = 'container clearfix fixed-top'>
+                <div id ='div-logout' style="visibility: hidden;" class = "form-group float-right">
+                    <form name ='logout-form' method = 'POST' action = "{{ url_for('logout') }}" onsubmit="return logout(logout_url)">
+                        <input type = 'submit' value = 'logout'>
+                    </form>
+                </div>
+            </div>
+
+            <div id = 'messenger' style="visibility: hidden;" class = "container-fluid clearfix">
+                <div id = 'display' class = 'container-fluid'>
+                    <!--div id = 'msg_div_0' style="visibility: hidden;" class='clearfix container-fluid'>
+                        <strong class = 'clearfix'><header id = 'sender_0'></header></strong><p id='msg_0'></p><hr class='clearfix'>
+                    </div-->
+                </div>
+                
+                <div id='msngr-form' class= 'form-group'>
+                    <form name = 'msngr-form'  onsubmit="return send(get_url)">
+                        <p><input type="textarea/button" name = 'msg'></p>
+                        <br>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    </body>
+</html>
