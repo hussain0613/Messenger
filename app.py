@@ -103,13 +103,13 @@ def send():
     
     print(f"[*] send to client name 1 : {get_device_name(request.environ['HTTP_USER_AGENT'])}, timestamp: {session['timestamp']}")
     
-    while time.time()-t < 30 and ((not messeges) or session['timestamp'] == next(reversed(messeges))):
+    while time.time()-t < 25 and ((not messeges) or session['timestamp'] == next(reversed(messeges))):
         pass
 
-    if time.time()-t => 30:
-        resp = make_response(json.dumps(new_msgs))
+    if time.time()-t >= 25:
+        resp = make_response(json.dumps(304))
         resp.headers['Content-Type'] = 'application/json'
-        return json.dumps(304)
+        return resp
     if int(session['timestamp']) > 0:
         new_msgs = [messeges[msg] for msg in messeges if msg > session['timestamp']]
     else:
