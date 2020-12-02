@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% if current_user.is_authenticated %}
+    {% block head %}
+        
+    {% endblock %}
+{% endif %}
+{% block body %}
+    {% if current_user.is_anonymous %}
+        <div class = "container-fluid">
+            <span class="align-text-middle">
+                <h1 class = "text-center">Welcome to  BasicChatRoom</h1>
+                <p class = "text-center"> plese login to use. if u havent signed up yet please sign up first</p>
+            </span>
+        </div>
+    {% else %}
+    
+    <div id = 'messenger' class = "container-fluid clearfix">
+        <div id = 'display' class = 'container-fluid'>
+            
+        </div>
+        
+        <div id='msngr-form-div' class= 'form-group'>
+            <form name = 'msngr-form' id='msngr-form-id' onsubmit = "return send_json(get_json_url)" >
+                <p><input type="textarea/button" name = 'msg'></p>
+                <br>
+            </form>
+        </div>
+    </div>
+    <script type = "text/javascript">
+        document.body.addEventListener("load", get_json(send_json_url));
+    </script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block subtitle %} Login {% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{url_for('auth.static', filename ='css/alignment.css') }}">
+{% endblock %}
+
+{% block body %}
+    
+    {% if form %}
+    <div id = "login-div" class = "container bg-dark p-5 col-sm-3 vertically-centered">
+        <h2 class="ml-2 text-white">Login<hr style="background-color:white;"></h2>
+        <form method = "POST" action = "{{ url_for( 'auth.login') }}">
+            
+            {{ form.csrf_token }}
+            <div class = "form-group pt-3">
+                {{form.username.label(class="text-white")}}
+                {{form.username(class = "form-control", placeholder="Username")}}
+            </div>
+
+            <div class = "form-group">
+                {{form.password.label(class="text-white")}}
+                {{form.password(class = "form-control", placeholder="Password")}}
+            </div>
+
+            <div class = "mb-3">
+                {{ form.submit(class="btn") }}
+            </div>
+
+            <div class = "form-group ml-4 mb-3">
+                {{form.rememberme(class = "form-check-input")}}
+                {{ form.rememberme.label(class="form-check-label text-white") }}
+            </div>
+            <div class = "mb-3">
+                <a href = "{{ url_for('auth.request_password_reset') }}" >Forgot Password?</a>
+            </div>
+
+            <div class = "pb-3">
+                <text class="text-white">Don't have an account?</text> <a href = "{{ url_for('auth.sign_up') }}" > Sign Up</a>
+            </div>
+        </form>
+    </div>
+    {% else %}
+        <h3>No form given</h3>
+    {% endif %}
+
+ {% endblock %}

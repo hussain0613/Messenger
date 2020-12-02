@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block subtitle %} Delete User {% endblock %}
+
+{% block body %}
+    <h1>Delete user {{username}}<hr></h1>
+    {% if form %}
+        <script>
+            function Confirm(){
+                document.getElementById('delete_user_form').innerHTML = `{{form.csrf_token()}}
+                <p>Passowrd: {{ form.password }} </p><p>{{ form.confirm() }}</p>`
+            }
+        </script>
+    
+    <a href = " {{url_for('auth.users') }}">No!</a> || 
+    <button onclick="Confirm()">Delete!</button>
+
+    <form id = "delete_user_form" method = "POST" action = "{{ url_for( 'auth.delete_user', username = username) }}">
+
+    </form>
+    {% else %}
+        <h3>No form given</h3>
+    {% endif %}
+ {% endblock %}

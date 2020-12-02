@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block subtitle %} Login {% endblock %}
+
+{% block body %}
+    <script>
+        function f(){
+            document.getElementById('pass_field').innerHTML = 'Password: {{form.password}}'; 
+            document.getElementById('confirm_field').innerHTML = '{{form.confirm}}';
+        }
+    </script>
+    <h1>Edit Role for {{ user.username }}<hr></h1>
+    {% if form %}
+        <form method = "POST" action = "{{ url_for( 'auth.edit_role', pk = user.id) }}">  
+            {{ form.csrf_token }}
+            <p>Select Role: {{ form.role }}</p>
+            <p><button onClick="f()" type='button'>
+                Submit
+            </button></p>
+            <p id = 'pass_field'></p>
+            <p id = 'confirm_field'></p>
+
+        </form>
+    {% else %}
+        <h3>No form given</h3>
+    {% endif %}
+ {% endblock %}

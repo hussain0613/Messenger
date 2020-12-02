@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block subtitle %} :Pichon-Users {% endblock %}
+
+
+{% block body%}
+<h1>Users</h1>
+<hr><hr><br><br>
+    {% if users %}
+        {% for user in users %}
+            {{user.id}}. {{user.role}}{% if user.id == current_user.id %} (Self){% endif %}
+            <h3><a href = "{{ url_for('auth.profile', username = user.username) }}" >{{ user.username }}</a></h3>
+            {% if current_user.role.lower() == 'admin' %}
+                <a href = " {{url_for('auth.edit_role', pk = user.id ) }}">edit_role</a>
+            {% endif %}
+            <hr>
+        {% endfor %}
+    {% else %}
+        <h3>No Users</h3>
+    {% endif %}
+{% endblock %}

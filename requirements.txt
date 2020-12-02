@@ -1,2 +1,9 @@
 flask
-uwsgi
+sqlalchemy
+flask-sqlalchemy
+wtforms
+flask-wtf
+flask-login
+alembic
+flask-migrate
+gunicorn
