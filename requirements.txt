@@ -5,6 +5,7 @@ wtforms
 flask-wtf
 flask-login
 flask-mail
+python-dotenv
 alembic
 flask-migrate
 gunicorn
