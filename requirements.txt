@@ -3,6 +3,7 @@ sqlalchemy
 flask-sqlalchemy
 wtforms
 flask-wtf
+emial-validator
 flask-login
 flask-mail
 python-dotenv
