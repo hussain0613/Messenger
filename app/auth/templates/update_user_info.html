@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block subtitle %} Update Info {% endblock %}
+
+{% block body %}
+    <h1>Update info<hr></h1>
+    {% if form %}
+        <form method = "POST" action = "{{ url_for( 'auth.update_user_info') }}">  
+            {{ form.csrf_token }}
+            {% for field in form %}
+                {% if field != form.csrf_token %}
+                    <p>{{field.label}} {{field}}</p>
+                {% endif %}
+            {% endfor %}
+        </form>
+    {% else %}
+        <h3>No form given</h3>
+    {% endif %}
+ {% endblock %}

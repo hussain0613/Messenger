@@ -1,0 +1,16 @@
+.vertically-centered {
+    /*position: sticky;*/
+    top: 50%;
+    /*left: 50%;*/
+    /* bring your own prefixes */
+    transform: translate(-0%, -50%);
+  }
+
+/*#login-div{
+    width: 40%;
+}*/
+
+/*#signup-div{
+    width: auto;
+}*/
+
