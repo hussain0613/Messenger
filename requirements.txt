@@ -2,9 +2,11 @@ flask
 sqlalchemy
 flask-sqlalchemy
 wtforms
+wtforms-sqlalchemy
 flask-wtf
 email-validator
 flask-login
+bcrypt
 flask-mail
 python-dotenv
 alembic
