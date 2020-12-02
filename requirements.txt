@@ -4,7 +4,8 @@ flask-sqlalchemy
 wtforms
 flask-wtf
 flask-login
+flask-mail
+python-dotenv
 alembic
 flask-migrate
-flask-mail
 gunicorn
