@@ -1,26 +1,6 @@
 var msgs = []
 var c = 0;
 
-function check_logged_in(){
-    cookies = document.cookie.split(';')
-    for(cookie of cookies){
-        key_value = cookie.split('=')
-        if(key_value[0] == 'name'){
-            name = key_value[1]
-        }
-    }
-    if (name != "NaN" && name != NaN){
-        document.getElementById('div-login').style.visibility='hidden';
-        document.getElementById('messenger').style.visibility='visible';
-        document.getElementById('div-logout').style.visibility='visible';
-    }else{
-        document.getElementById('div-login').style.visibility='visible';
-        document.getElementById('messenger').style.visibility='hidden';
-        document.getElementById('div-logout').style.visibility='hidden';
-    }
-    get(send_url)
-}
-
 function display(msg_dict){
     var str_c = c.toString();
     var sender_id = 'sender_' + str_c;
@@ -41,12 +21,6 @@ function display(msg_dict){
     document.getElementById(msg_id).innerHTML = msg_dict['msg'];
     ++c;
     str_c = c.toString();
-    /*document.getElementById('display').innerHTML += `<div id = 'msg_div_${str_c}' style='visibility: hidden' class='clearfix container-fluid'>
-        <strong class = 'clearfix'><header id = 'sender_${str_c}'></header></strong><p id='msg_${str_c}'></p>
-        <hr>
-    </div>
-    `;*/
-    
     return false;
 }
 
@@ -101,22 +75,33 @@ function send_json(url){
 function get_json(url){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
-        if(msgs.length != 0){
-            var last_msg_timestamp = msgs[msgs.length - 1]['timestamp'];
-        }else{
-            last_msg_timestamp = 0.0;
-        }
         if (this.readyState == 4 && this.status == 200){
             new_msgs = JSON.parse(this.responseText)
             if(new_msgs == '304'){
-                return get_json(url)
+                return check(check_url)
+            }
+            if(msgs.length != 0){
+                var last_msg_timestamp = msgs[msgs.length - 1]['timestamp'];
+            }else{
+                last_msg_timestamp = 0.0;
             }
             for (msg of new_msgs){
                 if(last_msg_timestamp != msg['timestamp'])
                     display(msg)
             }
             msgs.push(...new_msgs)
-            return get_json(url)
+            //console.log("200:- " + this.status)
+            return check(check_url)
+        }
+        else if(this.readyState == 4 && this.status == 304){
+            //console.log("304:-" + this.status)
+            return check(check_url)
+        }
+        else if(this.readyState == 4 && this.status == 500){
+            var msg = "[!] Whoa! Calm down mate, please be a bit gentle with the server! And also please refresh the page! And also could you\
+            plese ask your friend to do the same too?!"
+            display({'sender': '[!]SERVER', 'msg': msg})
+            return check(check_url)
         }
     }
     xhttp.open("GET", url, true)
@@ -125,21 +110,25 @@ function get_json(url){
 
 
 
-
-function logout(url){
-    
-    //gotta send data to the server
-    document.getElementById('display').innerHTML = ""
-    c = 0;
-    name = NaN
-    msgs = []
+function check(url){
     var xhttp = new XMLHttpRequest();
-    xhttp.open('GET', url, true);
+    xhttp.onreadystatechange = function(){
+        if (this.readyState == 4 && this.status == 200){
+            resp = JSON.stringify(this.responseText)
+            if(resp == '304'){
+                return check(url)
+            }else{
+                return get_json(send_json_url)
+            }
+        }
+        else if(this.readyState == 4 && this.status == 500){
+            var msg = "[!] Whoa! Calm down mate, please be a bit gentle with the server! And also please refresh the page! And also could you\
+            plese ask your friend to do the same too?!"
+            display({'sender': '[!]SERVER', 'msg': msg})
+            return check(url)
+        }
+    }
+    xhttp.open("GET", url, true)
     xhttp.send()
-    
-    document.getElementById('div-login').style.visibility='visible';
-    document.getElementById('messenger').style.visibility='hidden';
-    document.getElementById('div-logout').style.visibility='hidden';
-    return false;
 }
 
