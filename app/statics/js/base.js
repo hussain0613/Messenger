@@ -108,12 +108,15 @@ function get_json(url){
         }
         if (this.readyState == 4 && this.status == 200){
             new_msgs = JSON.parse(this.responseText)
+            if(new_msgs == '304'){
+                return get_json(url)
+            }
             for (msg of new_msgs){
                 if(last_msg_timestamp != msg['timestamp'])
                     display(msg)
             }
             msgs.push(...new_msgs)
-            get_json(url)
+            return get_json(url)
         }
     }
     xhttp.open("GET", url, true)

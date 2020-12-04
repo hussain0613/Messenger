@@ -9,12 +9,12 @@ from . import db
 from .auth.models import User
 from .models import Message
 
-#db_timestamp = None #Message.query.order_by(Message.timestamp.desc()).first().timestamp
+db_timestamp = None #Message.query.order_by(Message.timestamp.desc()).first().timestamp
 
 def index():
     session['timestamp'] = 0.0
-    #global db_timestamp
-    #db_timestamp = Message.query.order_by(Message.timestamp.desc()).first()
+    global db_timestamp
+    db_timestamp = Message.query.order_by(Message.timestamp.desc()).first()
     return render_template('index.html')
 
 @login_required
@@ -30,26 +30,31 @@ def get_json():
     db.session.add(msg)
     db.session.commit()
     session['timestamp'] = msg.timestamp
-    #global db_timestamp
-    #db_timestamp = msg
+    global db_timestamp
+    db_timestamp = msg
 
     return json.dumps(msg.timestamp)
 
 
 @login_required
 def send_json():
-
+    t = time.time()
     #session['timestamp'] = json.loads(request.data.decode())
 
-    last_msg = Message.query.order_by(Message.timestamp.desc()).first()
-    while (not last_msg) or (session['timestamp'] >= last_msg.timestamp ):
-        last_msg = Message.query.order_by(Message.timestamp.desc()).first()
+    last_msg = db_timestamp #Message.query.order_by(Message.timestamp.desc()).first()
+    while (time.time()-t <10 ) and ((not last_msg) or (session['timestamp'] >= last_msg.timestamp )):
+        last_msg = db_timestamp #Message.query.order_by(Message.timestamp.desc()).first()
 
-    print("************************************", session['timestamp'])
+    #print("************************************", session['timestamp'])
     msgs = list(map(Message.as_dict, Message.query.filter(text(f"message.timestamp > {session['timestamp']}")).all()))
-    print("************************msgs: ", msgs)
+    #print("************************msgs: ", msgs)
 
-    session['timestamp'] = msgs[-1]['timestamp']
-
-    return json.dumps(msgs)
+    if(msgs):
+        #print("********************** returning msgs:", msgs)
+        session['timestamp'] = msgs[-1]['timestamp']
+        return json.dumps(msgs)
+    
+    else:
+        #print("********************************* returning 304")
+        return json.dumps('304')
 
