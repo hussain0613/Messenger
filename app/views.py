@@ -38,16 +38,19 @@ def get_json():
 
 @login_required
 def send_json():
-
+    t = time.time()
     #session['timestamp'] = json.loads(request.data.decode())
 
     last_msg = db_timestamp #Message.query.order_by(Message.timestamp.desc()).first()
-    while (not last_msg) or (session['timestamp'] >= last_msg.timestamp ):
+    while (time.time()-t <10 ) and ((not last_msg) or (session['timestamp'] >= last_msg.timestamp )):
         last_msg = db_timestamp #Message.query.order_by(Message.timestamp.desc()).first()
 
-    print("************************************", session['timestamp'])
+    if(time.time()-t <= 10):
+        return json.dumps('304')
+    
+    #print("************************************", session['timestamp'])
     msgs = list(map(Message.as_dict, Message.query.filter(text(f"message.timestamp > {session['timestamp']}")).all()))
-    print("************************msgs: ", msgs)
+    #print("************************msgs: ", msgs)
 
     session['timestamp'] = msgs[-1]['timestamp']
 
