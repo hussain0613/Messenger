@@ -33,12 +33,14 @@ def get_json():
     msg.timestamp = time.time()
     
     session['timestamp'] = msg.timestamp
-    global global_last_msg_timestamp
-    global_last_msg_timestamp = msg.timestamp
-
+    
     db.session.add(msg)
     db.session.commit()
 
+
+    global global_last_msg_timestamp
+    global_last_msg_timestamp = msg.timestamp
+    
     return json.dumps(msg.timestamp)
 
 

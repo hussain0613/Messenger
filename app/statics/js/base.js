@@ -114,10 +114,12 @@ function check(url){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if (this.readyState == 4 && this.status == 200){
-            resp = JSON.stringify(this.responseText)
+            resp = JSON.parse(this.responseText)
             if(resp == '304'){
+                console.log('checkf: 304:-', resp)
                 return check(url)
             }else{
+                console.log('checkf: non 304:-', resp)
                 return get_json(send_json_url)
             }
         }
@@ -125,6 +127,7 @@ function check(url){
             var msg = "[!] Whoa! Calm down mate, please be a bit gentle with the server! And also please refresh the page! And also could you\
             plese ask your friend to do the same too?!"
             display({'sender': '[!]SERVER', 'msg': msg})
+            console.log('checkf: 500:-', resp)
             return check(url)
         }
     }
