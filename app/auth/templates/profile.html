@@ -28,69 +28,6 @@
         <p>Last modified by {{ user.last_modifier.username }} on {{ user.last_modified_date}}</p>
 
         <h3>Actions:</h3>
-        <h4>Created</h4>
-        
-        Words:
-        <ul>
-            {% for word in user.words_created %}
-                <li>{{ word.word }}</li>
-            {% endfor %}
-        </ul>
-
-        <br>Meanings:
-        <ul>
-            {% for meaning in user.meanings_created %}
-                <li>{{ meaning.meaning }}</li>
-            {% endfor %}
-        </ul>
-
-        <br>Examples:
-        <ul>
-            {% for ex in user.exampls_created %}
-                <li>{{ ex.example }}</li>
-            {% endfor %}
-        </ul>
-
-        <br>Users:
-        <ul>
-            {% for usr in user.users_created %}
-                <li>{{ usr.username }}</li>
-            {% endfor %}
-        </ul>
-
-
-
-        <h4>Modified</h4>
-        
-        Words:
-        <ul>
-            {% for word in user.words_modified %}
-                <li>{{ word.word }}</li>
-            {% endfor %}
-        </ul>
-
-        <br>Meanings:
-        <ul>
-            {% for meaning in user.meanings_modified %}
-                <li>{{ meaning.meaning }}</li>
-            {% endfor %}
-        </ul>
-
-        <br>Examples:
-        <ul>
-            {% for ex in user.exampls_modified %}
-                <li>{{ ex.example }}</li>
-            {% endfor %}
-        </ul>
-
-        <br>Users:
-        <ul>
-            {% for user in user.users_modified %}
-                <li>{{ user.username }}</li>
-            {% endfor %}
-        </ul>
-    
-        <h3>Actions from actions:</h3>
         <ul>
             {% for action in user.actions %}
                 <li>{{ action }}</li>

@@ -19,7 +19,7 @@
             var username = "{{current_user.username}}"
             var check_url = "{{ url_for('main.check') }}"
         </script>
-        <script type="text/javascript" src=" {{ url_for('static', filename='js/base.js') }} "></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/base.js') }} "></script>
 
         <link rel="stylesheet" href="{{url_for('static', filename='css/base.css') }}">
 
@@ -33,22 +33,25 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <ul class="navbar-nav ml-auto">
-                    {% if current_user.is_anonymous %}
-                        <li class = 'nav-item'>
-                            <a class="nav-link" href = "{{ url_for('auth.login') }}">Login</a>
-                        </li>
-                        <li class = 'nav-item'>
-                            <a class="nav-link" href = "{{ url_for('auth.sign_up') }}">Sign Up</a>
-                        </li>
-                    {% else %}
-                        <li class = 'nav-item'>
-                            <a class="nav-link" href = "{{ url_for('auth.logout') }}">Logout</a>
-                        </li>
-                    {% endif %}
-                </ul>
-
+                <div id = "navbarSupportedContent" class = "collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        {% if current_user.is_anonymous %}
+                            <li class = 'nav-item'>
+                                <a class="nav-link" href = "{{ url_for('auth.login') }}">Login</a>
+                            </li>
+                            <li class = 'nav-item'>
+                                <a class="nav-link" href = "{{ url_for('auth.sign_up') }}">Sign Up</a>
+                            </li>
+                        {% else %}
+                            <li class = 'nav-item'>
+                                <a class="nav-link" href = "{{ url_for('auth.profile') }}">Profile</a>
+                            </li>
+                            <li class = 'nav-item'>
+                                <a class="nav-link" href = "{{ url_for('auth.logout') }}">Logout</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </nav>
         </div>
 
