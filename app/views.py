@@ -50,9 +50,11 @@ def send_json():
     #print("************************msgs: ", msgs)
 
     if(msgs):
+        #print("********************** returning msgs:", msgs)
         session['timestamp'] = msgs[-1]['timestamp']
-
         return json.dumps(msgs)
+    
     else:
+        #print("********************************* returning 304")
         return json.dumps('304')
 
