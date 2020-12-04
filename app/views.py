@@ -45,9 +45,6 @@ def send_json():
     while (time.time()-t <10 ) and ((not last_msg) or (session['timestamp'] >= last_msg.timestamp )):
         last_msg = db_timestamp #Message.query.order_by(Message.timestamp.desc()).first()
 
-    if(time.time()-t <= 12):
-        return json.dumps('304')
-    
     #print("************************************", session['timestamp'])
     msgs = list(map(Message.as_dict, Message.query.filter(text(f"message.timestamp > {session['timestamp']}")).all()))
     #print("************************msgs: ", msgs)
@@ -55,5 +52,7 @@ def send_json():
     if(msgs):
         session['timestamp'] = msgs[-1]['timestamp']
 
-    return json.dumps(msgs)
+        return json.dumps(msgs)
+    else:
+        return json.dumps('304')
 
