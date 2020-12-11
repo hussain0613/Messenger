@@ -25,124 +25,112 @@ function display(msg_dict){
 }
 
 
-function send_json(url){
-    input = document.forms['msngr-form']['msg']
-    msg = input.value;
-    input.value = ''
-    var ts = Date.now();
+function send_msg_json(url){
+    var inp = document.getElementById('msg')
+    if(userid == null){
+        msg_dict = {
+            'sender_id': userid,
+            'sender': 'System!',
+            'msg': '[!] You are not logged in!' 
+        }
+        display(msg_dict)
+        return false
+    }
+    last_msg_id = 0;
+    if (msgs.length>0){
+        last_msg_id = msgs[msgs.length-1]['id']
+    }
     msg_dict = {
+        'id': last_msg_id+1,
         'sender_id': userid,
         'sender': username,
-        'msg': msg,
-        'timestamp': ts
+        'msg': inp.value,
+        'timestamp': Date.now() 
     }
-    msgs.push(msg_dict)
-    display(msg_dict);
+    display(msg_dict)
+    inp.value = ''
 
-    //gotta send msg to the server
-    var xhttp = new XMLHttpRequest();
+    xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
-        if (this.readyState == 4 && this.status == 200){
-            ts = JSON.parse(this.responseText)
-            msgs[msgs.length - 1]['timestamp'] = ts
+        if(this.readyState == 4 && this.status == 200){
+            var resp = JSON.parse(this.responseText);
+            msg_dict['id'] = resp['id']
+            //msg_dict['timestamp'] = resp['timestamp']
+            msgs.push(msg_dict)
+            return false;
         }
     }
     xhttp.open('POST', url, true);
     xhttp.send(JSON.stringify(msg_dict))
-
     return false;
 }
 
-function get_json(url){
-    var xhttp = new XMLHttpRequest();
+
+function get_msgs_json(url){
+    if(msgs.length>0){
+        var last_msg = msgs[msgs.length-1]
+        var last_ts = last_msg['timestamp']
+        var last_msg_id = last_msg['id']
+    }else{
+        var last_msg = null;
+        var last_ts = 0.0;
+        var last_msg_id = null
+    }
+    xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
-        if (this.readyState == 4 && this.status == 200){
-            new_msgs = JSON.parse(this.responseText)
-            if(new_msgs == '304'){
-                return inroom_check(inroom_check_url)
+        if(this.readyState == 4 && this.status == 200){
+            var resp = JSON.parse(this.responseText);
+            
+            for (msg of resp){
+                if(msg['id'] != last_msg_id){
+                    display(msg);
+                    msgs.push(msg)
+                }
             }
-            if(msgs.length != 0){
-                var last_msg_timestamp = msgs[msgs.length - 1]['timestamp'];
-            }else{
-                last_msg_timestamp = 0.0;
-            }
-            for (msg of new_msgs){
-                if(last_msg_timestamp != msg['timestamp'])
-                    display(msg)
-            }
-            msgs.push(...new_msgs)
-            //console.log("200:- " + this.status)
-            return inroom_check(inroom_check_url)
-        }
-        else if(this.readyState == 4 && this.status == 304){
-            //console.log("304:-" + this.status)
-            return inroom_check(inroom_check_url)
-        }
-        else if(this.readyState == 4 && this.status == 500){
-            var msg = "[!] Whoa! Calm down mate, please be a bit gentle with the server! And also please refresh the page! And also could you\
-            plese ask your friend to do the same too?!"
-            display({'sender': '[!]SERVER', 'msg': msg})
-            return inroom_check(inroom_check_url)
+            
+            return check_room(check_room_url);
         }
     }
-    xhttp.open("GET", url, true)
-    xhttp.send()
+    xhttp.open('POST', url, true);
+    if(last_msg_id){
+        xhttp.send(JSON.stringify(last_msg_id))
+    }else{
+        xhttp.send(JSON.stringify(-1))
+    }
 }
 
 
 
-function check(url){
-    console.log("started normal check")
-    var xhttp = new XMLHttpRequest();
+function check_room(url){
+    if(msgs.length>0){
+        var last_msg = msgs[msgs.length-1]
+        var last_ts = last_msg['timestamp']
+        var last_msg_id = last_msg['id']
+    }else{
+        var last_msg = null;
+        var last_ts = 0.0;
+        var last_msg_id = null
+    }
+
+    xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
-        if (this.readyState == 4 && this.status == 200){
-            resp = JSON.parse(this.responseText)
-            if(resp == '304'){
-                //console.log('checkf: 304:-', resp)
-                return check(url)
-            }else{
-                //console.log('checkf: non 304:-', resp)
-                // shob dorkari part ke bold/ or something korte hbe 
-                console.log("new msgs on other rooms maybe")
-                return check(url)
+        if(this.readyState == 4 && this.status == 200){
+            var resp = JSON.parse(this.responseText);
+            
+            if (resp == '200'){
+                return get_msgs_json(send_msg_json_url);
+            }
+            else{
+                return check_room(url);
             }
         }
-        else if(this.readyState == 4 && this.status == 500){
-            var msg = "[!] Whoa! Calm down mate, please be a bit gentle with the server! And also please refresh the page! And also could you\
-            plese ask your friend to do the same too?!"
-            display({'sender': '[!]SERVER', 'msg': msg})
-            //console.log('checkf: 500:-', resp)
-            return check(url)
-        }
     }
-    xhttp.open("GET", url, true)
-    xhttp.send()
+    xhttp.open('POST', url, true);
+    if(last_msg_id){
+        xhttp.send(JSON.stringify(last_msg_id))
+    }else{
+        xhttp.send(JSON.stringify(-1))
+    }
 }
 
 
-
-function inroom_check(url){
-    console.log("started inroom_check")
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){
-        if (this.readyState == 4 && this.status == 200){
-            resp = JSON.parse(this.responseText)
-            if(resp == '304'){
-                //console.log('checkf: 304:-', resp)
-                return inroom_check(url)
-            }else{
-                //console.log('checkf: non 304:-', resp)
-                return get_json(send_json_url)
-            }
-        }
-        else if(this.readyState == 4 && this.status == 500){
-            var msg = "[!] Whoa! Calm down mate, please be a bit gentle with the server! And also please refresh the page! And also could you\
-            plese ask your friend to do the same too?!"
-            display({'sender': '[!]SERVER', 'msg': msg})
-            //console.log('checkf: 500:-', resp)
-            return inroom_check(url)
-        }
-    }
-    xhttp.open("GET", url, true)
-    xhttp.send()
-}

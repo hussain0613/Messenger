@@ -25,20 +25,7 @@ class User(UserMixin, db.Model):
 
     last_modifier_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     last_modifier = db.relationship('User', backref = db.backref('users_modified',cascade="save-update"), cascade="save-update", foreign_keys=[last_modifier_id], remote_side = 'User.id', post_update = True)
-    last_modified_date = db.Column(db.DateTime, default = datetime.datetime.utcnow())
-    
-
-    def get_last_messages_timestamps(self, curr_room_id = None):
-        roomwise_last_msg_ts_dict = {}
-        for room in self.rooms:
-            if(room.id == curr_room_id): continue
-            last_msg = room.get_last_msg()
-            if last_msg:
-                roomwise_last_msg_ts_dict[f"{room.id}"] = last_msg.timestamp #next(reversed(room.messages)).timestamp
-            else:
-                roomwise_last_msg_ts_dict[f"{room.id}"] = 0.0
-        return roomwise_last_msg_ts_dict
-    
+    last_modified_date = db.Column(db.DateTime, default = datetime.datetime.utcnow())    
 
     def setPassword(self, psd):
         salt = bcrypt.gensalt()

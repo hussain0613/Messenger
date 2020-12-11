@@ -21,6 +21,7 @@ class Message(db.Model):
     @staticmethod
     def as_dict(self):
         return {
+            'id': self.id,
             'sender_id': self.sender_id,
             'sender': self.sender.username,
             'msg': self.message,
@@ -77,7 +78,7 @@ class P2RConnection(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey("User.id"))
     room = db.relationship("Room", backref = db.backref("p2rconn"))
 
-    status = db.Column(db.String(50), default = 'none') ## seen, notified, none
+    status = db.Column(db.String(50), default = 'none') ## seen, notified, none eita bhul jaygay disi.. eita receives e hbe.
 
 
     __table_args__ = (db.UniqueConstraint('user_id', 'room_id', name = 'p2r_connection'),)
@@ -91,7 +92,7 @@ class Receivers(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
 
     message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
-    message = db.relationship("Message", backref = db.backref("receivers"))
+    message = db.relationship("Message", backref = db.backref("receivers")) ## the backref names are not 'right'
 
     receiver_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     receiver = db.relationship('User', backref = db.backref('received_messages'))

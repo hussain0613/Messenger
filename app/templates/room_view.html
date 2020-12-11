@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% if current_user.is_authenticated %}
     {% block head %}
-        
+        <script type="text/javascript">
+            var  get_msg_json_url = "{{url_for('main.get_msg_json', room_id = room.id)}}"
+            var  send_msg_json_url = "{{url_for('main.send_msgs_json', room_id = room.id)}}"
+            var check_room_url = "{{url_for('main.check_room', room_id = room.id)}}"
+        </script>
     {% endblock %}
 {% endif %}
 {% block body %}
@@ -80,7 +84,7 @@
         </div>
         
         <div id='msngr-form-div' class= 'form-group'>
-            <form name = 'msngr-form' id='msngr-form-id' onsubmit = "return send_json(get_json_url)" class = "form-group">
+            <form name = 'msngr-form' id='msngr-form-id' onsubmit = "return send_msg_json(get_msg_json_url)" class = "form-group">
                 <div class = 'form-inline col-sm-12'>
                     <div class = 'form-inline col-sm-10'>
                         <textarea type="textarea" name = 'msg' id = 'msg' class = 'form-control col-sm-12'></textarea>
@@ -94,15 +98,12 @@
     </div>
     <script type = "text/javascript">
         document.body.onload = function(event){
-            console.log('room body eventlistener');
-            inroom_check(inroom_check_url);
-            check(check_url);
+            check_room(check_room_url);
             return true;
         };
         document.getElementById('msg').onkeypress = function(event) {
-            //console.log(event.charCode)
-            if (event.charCode == 13 && !event.shiftKey) {
-                send_json(get_json_url)
+            if (event.charCode == 13 && event.shiftKey) {
+                send_msg_json(get_msg_json_url)
                 return false;
             }
         };
