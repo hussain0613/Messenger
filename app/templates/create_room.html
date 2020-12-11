@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <h1>Create room <hr></h1>
+    {% if form %}
+        <form method = "POST" action = "{{ url_for( 'main.create_room') }}">  
+            {{ form.csrf_token }}
+            <div class = "form-inline">
+                {{ form.name(placeholder="Room name", class = 'form-control col-sm-3 mr-2') }}
+                {{ form.submit(class="btn") }}
+            </div>
+        </form>
+    {% else %}
+        <h3>No form given</h3>
+    {% endif %}
+
+
+{% endblock %}

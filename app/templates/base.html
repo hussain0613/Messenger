@@ -11,13 +11,13 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
         <script type='text/javascript'>
-            //login_url = "{{ url_for('auth.login') }}"
-            var send_json_url = "{{ url_for('main.send_json') }}"
-            var get_json_url = "{{ url_for('main.get_json') }}"
-            //logout_url = "{{ url_for('auth.logout') }}"
-            var userid = "{{current_user.id}}"
-            var username = "{{current_user.username}}"
-            var check_url = "{{ url_for('main.check') }}"
+            {% if current_user.is_authenticated %}
+                var userid = {{current_user.id}}
+                var username = "{{current_user.username}}"
+            {% else %}
+                var userid = null;
+                var username = null;
+            {% endif %}
         </script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/base.js') }} "></script>
 
@@ -43,6 +43,14 @@
                                 <a class="nav-link" href = "{{ url_for('auth.sign_up') }}">Sign Up</a>
                             </li>
                         {% else %}
+                            <li class = 'nav-item'>
+                                <a class="nav-link" href = "{{ url_for('main.invitations') }}">Invitaions</a>
+                            </li>    
+
+                            <li class = 'nav-item'>
+                                <a class="nav-link" href = "{{ url_for('main.create_room') }}">Create Room</a>
+                            </li>    
+
                             <li class = 'nav-item'>
                                 <a class="nav-link" href = "{{ url_for('auth.profile') }}">Profile</a>
                             </li>

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% if current_user.is_authenticated %}
+    {% block head %}
+        <script type="text/javascript">
+            var  get_msg_json_url = "{{url_for('main.get_msg_json', room_id = room.id)}}"
+            var  send_msg_json_url = "{{url_for('main.send_msgs_json', room_id = room.id)}}"
+            var check_room_url = "{{url_for('main.check_room', room_id = room.id)}}"
+        </script>
+    {% endblock %}
+{% endif %}
+{% block body %}
+    {% if current_user.is_anonymous %}
+        <div class = "container-fluid">
+            <span class="align-text-middle">
+                <h1 class = "text-center">Welcome to  BasicChatRoom</h1>
+                <p class = "text-center"> plese login to use. if u havent signed up yet please sign up first</p>
+            </span>
+        </div>
+    {% else %}
+    
+    {% if room.creator_id == current_user.id %}
+        <div id = "admin_panel" class = "container-fluid">
+            <script>
+                function InviteFormVisibility(){
+                    elem2 = document.getElementById('invite_msg')
+                    elem = document.getElementById('invite-form-div')
+                    if (elem.style.visibility != 'visible'){
+                        elem.style.visibility = 'visible'
+                    }else{
+                        elem.style.visibility = 'collapse'
+                        elem2.innerHTML = null
+                    }
+                }
+                function comm(){
+                    try{
+                    console.log('comm called')
+                    form = document.forms['invite-form']
+                    uname = form['uname'].value
+                    console.log('comm creating xhttp obj')
+                    xhttp = new XMLHttpRequest();
+
+                    xhttp.onreadystatechange = function(){
+                        console.log('comm inside onradeystatechange')
+                        elem = document.getElementById('invite_msg')
+                        if(this.readystate == 4 && this.status == 200){
+                            ans = this.responseText();
+                            if(ans == '200'){
+                                elem.innerHTML = 'Successful!'
+                                elem.classList.toggle('alert alert-success')
+                            }else{
+                                document.getElementById('invite_msg').innerHTML = 'User not found!'
+                                elem.classList.toggle('alert alert-warning')
+                            }
+                        }
+                    }
+                    console.log('comm opening rqst')
+                    xhttp.open('POST', "{{ url_for('main.invite_members') }}", true)
+                    console.log('comm sending req')
+                    xhttp.send(uname)
+                    console.log('comm done')
+                    return false;
+                    }catch(err){
+                        console.log(err)
+                        return false
+                    }
+                }
+            </script>
+            <div id = 'invite' class = 'float-right'>
+                <span id = 'invite_text' class = 'btn btn-secondary' onclick="InviteFormVisibility()">Invite peoples!</span>
+                <div id = 'invite-form-div' class = 'form-inline' style="visibility:collapse;">
+                    <form onsubmit = 'return comm()' name = 'invite-form' action = "#" method = "GET">
+                        <input type='text' placeholder="Username" class="form-control" name='uname'>
+                        <input type="submit" value = 'Invite!'>
+                    </form>
+                    <span id = 'invite_msg'></span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <div id = 'messenger' class = "container-fluid clearfix">
+        <div id = 'display' class = 'container-fluid'>
+            
+        </div>
+        
+        <div id='msngr-form-div' class= 'form-group'>
+            <form name = 'msngr-form' id='msngr-form-id' onsubmit = "return send_msg_json(get_msg_json_url)" class = "form-group">
+                <div class = 'form-inline col-sm-12'>
+                    <div class = 'form-inline col-sm-10'>
+                        <textarea type="textarea" name = 'msg' id = 'msg' class = 'form-control col-sm-12'></textarea>
+                    </div>
+                    <div class = 'form-inline col-sm-2'>
+                        <input type="submit" name = 'msg-submit' class = 'btn btn-primary' value ="send">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type = "text/javascript">
+        document.body.onload = function(event){
+            check_room(check_room_url);
+            return true;
+        };
+        document.getElementById('msg').onkeypress = function(event) {
+            if (event.charCode == 13 && event.shiftKey) {
+                send_msg_json(get_msg_json_url)
+                return false;
+            }
+        };
+    </script>
+    {% endif %}
+{% endblock %}

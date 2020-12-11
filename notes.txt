@@ -1,0 +1,34 @@
+no friends..
+only greenlist, greylist, redlist
+
+
+whitelisted are shortlist
+ami kaure greenlist korar maane amar shortcut e tare paoa jaabe, but tader shortlist e ami thakbo emon kono kotha nai
+greylist are neutral people, ederke search dile paoa jabe bt not in the shortlist
+redlisted are those jaderke ami block korsi.. they wont see me nor will i see them
+
+there should be option for private account or something like that.
+..................
+
+check will check for any new msgs for that user..
+server will return a json like this {<roomid>: true/false}
+on the client side.. 
+if the user is on some room page then will check if oi room er ta true kina..
+jodi true hoy taile new_msg get er jonno request pathabe..
+get request pathanor shomoy shathe kon room er jonno tao pathate hobe.. that will be hardcoded in the page though. 'hidden' from the user 
+otherwise if any of the others are true taile upore newmsg er jaygay notify korbe. and will send check again
+are jodi all false taile just emnitei will send check again..
+................
+
+**** pagination khuboi important
+
+...................
+
+arr msg kibhabe check korbe u ask?
+last_msg(current_user.rooms[index].messages) against session[timestamp]
+shobgula false hoile actualy eikhane 304 pathano jay..
+firefox er weird behaviour o eine kono problem korar kotha na..
+..............................................
+ekhon session e just ekta timestamp rakhle hobe na. 
+prottekta alada room er jonno timestamp rakhte hobe..
+

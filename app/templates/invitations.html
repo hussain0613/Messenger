@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% if current_user.is_authenticated %}
+    {% block head %}
+        
+    {% endblock %}
+{% endif %}
+{% block body %}
+    {% if current_user.is_anonymous %}
+        <div class = "container-fluid">
+            <span class="align-text-middle">
+                <h1 class = "text-center">Welcome to  BasicChatRoom</h1>
+                <p class = "text-center"> plese login to use. if u havent signed up yet please sign up first</p>
+            </span>
+        </div>
+    {% else %}
+    <h1>Pendings:</h1>
+    <ul>
+        {% for inv in current_user.invitations_received %}
+            {%if inv.status == 'pending' %}
+                <li>
+                    {{inv.id}}:{{inv.room.roomname}} from {{inv.host.username}}
+                    <a href = "{{url_for('main.accept_invitation', invitation_id = inv.id, decision = 'yes')}}" class = 'btn btn-success'>Accept</a>
+                    <a href = "{{url_for('main.accept_invitation', invitation_id = inv.id, decision = 'no')}} " class = 'btn btn-danger'>Reject</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul> 
+
+    <h1>Rejected:</h1>
+    <ul>
+        {% for inv in current_user.invitations_received %}
+            {%if inv.status == 'rejected' %}
+                <li>{{inv.id}}:{{inv.room.roomname}} from {{inv.host.username}}</li>
+                <a href = "{{url_for('main.accept_invitation', invitation_id = inv.id, decision = 'yes')}}" class = 'btn btn-success'>Accept</a>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <h1>Accepted:</h1>
+    <ul>
+        {% for inv in current_user.invitations_received %}
+            {%if inv.status == 'accepted' %}
+                <li>{{inv.id}}:{{inv.room.roomname}} from {{inv.host.username}}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endblock %}

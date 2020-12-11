@@ -12,8 +12,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
 
     name = db.Column(db.String(200), nullable = False)
-    username = db.Column(db.String(200), unique = True, nullable = False)
-    email = db.Column(db.String(200), unique = True, nullable = False)
+    username = db.Column(db.String(200), unique = True, nullable = False, index =True)
+    email = db.Column(db.String(200), unique = True, nullable = False, index = True)
     password = db.Column("password", db.String(300), nullable = False)
 
     role = db.Column("role", db.String(20), default = "Guest")
@@ -25,11 +25,7 @@ class User(UserMixin, db.Model):
 
     last_modifier_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     last_modifier = db.relationship('User', backref = db.backref('users_modified',cascade="save-update"), cascade="save-update", foreign_keys=[last_modifier_id], remote_side = 'User.id', post_update = True)
-    last_modified_date = db.Column(db.DateTime, default = datetime.datetime.utcnow())
-    
-
-
-
+    last_modified_date = db.Column(db.DateTime, default = datetime.datetime.utcnow())    
 
     def setPassword(self, psd):
         salt = bcrypt.gensalt()

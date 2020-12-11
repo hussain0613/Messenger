@@ -13,34 +13,16 @@
             </span>
         </div>
     {% else %}
-    
-    <div id = 'messenger' class = "container-fluid clearfix">
-        <div id = 'display' class = 'container-fluid'>
-            
-        </div>
-        
-        <div id='msngr-form-div' class= 'form-group'>
-            <form name = 'msngr-form' id='msngr-form-id' onsubmit = "return send_json(get_json_url)" class = "form-group">
-                <div class = 'form-inline col-sm-12'>
-                    <div class = 'form-inline col-sm-10'>
-                        <textarea type="textarea" name = 'msg' id = 'msg' class = 'form-control col-sm-12'></textarea>
-                    </div>
-                    <div class = 'form-inline col-sm-2'>
-                        <input type="submit" name = 'msg-submit' class = 'btn btn-primary' value ="send">
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+    <h1>Rooms:</h1>
+    <ul>
+        {% for room in current_user.rooms %}
+            <li><a href="{{ url_for('main.room_view', room_id = room.id)}} ">{{room.id}}:{{room.roomname}}</a></li>
+        {% endfor %}
+    </ul> 
+
+
     <script type = "text/javascript">
-        document.body.addEventListener("load", check(check_url));
-        document.getElementById('msg').onkeypress = function(event) {
-            //console.log(event.charCode)
-            if (event.charCode == 13 && !event.shiftKey) {
-                send_json(get_json_url)
-                return false;
-            }
-        };
     </script>
+    
     {% endif %}
 {% endblock %}
