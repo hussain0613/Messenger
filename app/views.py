@@ -140,13 +140,14 @@ def send_msgs_json(room_id):
 @room_membership_required()
 @login_required
 def check_room(room_id):
+    t = time.time()
     #last_msg_ts = float(request.data.decode())
     last_msg_id = int(request.data.decode())
     
     msgs = list(map(Message.as_dict, 
                 Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ) 
                 ))
-    while not msgs:
+    while time.time()-t < 15 and not msgs:
         msgs = list(map(Message.as_dict, 
                 Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ) 
                 ))
