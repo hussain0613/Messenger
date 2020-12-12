@@ -1,7 +1,7 @@
 import json
 import time
 
-from flask import render_template, redirect, flash, request, session, Response, url_for, jsonify
+from flask import render_template, redirect, flash, request, Response, url_for, jsonify
 from flask_login import current_user, login_required
 from sqlalchemy import text, and_
 
@@ -20,11 +20,6 @@ def index():
 @room_membership_required()
 @login_required
 def room_view(room_id):
-    if 'timestamps' not in session:
-            session['timestamps'] = dict([(room.id, 0.0) for room in current_user.rooms])
-    
-    session['room_id'] = room_id
-    session['timestamps'][str(room_id)] = 0.0
     room = Room.query.get(room_id)
     #print("*********************** room_view: ", session['timestamps'])
     return render_template('room_view.html', room = room)
@@ -44,7 +39,6 @@ def create_room():
         db.session.commit()
 
         flash('Room created successfully!', category='alert alert-success')
-        session['room_id'] = room.id
         return redirect(url_for('main.room_view', room_id = room.id))
 
     return render_template('create_room.html', form = form)
@@ -67,7 +61,7 @@ def invite_members(room_id):
     inv = Invitation()
     inv.host_id = current_user.id
     inv.guest_id = user.id
-    inv.room_id = session['room_id']
+    inv.room_id = room_id
 
     db.session.add(inv)
     db.session.commit()
