@@ -1,1 +1,1 @@
-web: flask db migrage; flask db upgrade; gunicorn --workers 1  --threads 4 server:app
+web: flask db migrate; flask db upgrade; gunicorn --workers 1  --threads 4 server:app
