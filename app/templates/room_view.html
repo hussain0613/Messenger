@@ -54,7 +54,7 @@
                         }
                     }
                     console.log('comm opening rqst')
-                    xhttp.open('POST', "{{ url_for('main.invite_members') }}", true)
+                    xhttp.open('POST', "{{ url_for('main.invite_members', room_id = room.id) }}", true)
                     console.log('comm sending req')
                     xhttp.send(uname)
                     console.log('comm done')

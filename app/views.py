@@ -59,7 +59,7 @@ def delete_room():
 
 @room_membership_required()
 @login_required
-def invite_members():
+def invite_members(room_id):
     guest_username = request.data.decode()
     user = User.query.filter_by(username = guest_username).first()
     if not user:

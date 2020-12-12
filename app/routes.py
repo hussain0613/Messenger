@@ -10,7 +10,7 @@ main.route("/index/")(index)
 main.route('/room/<int:room_id>/')(room_view)
 main.route('/create_room/', methods = ['POST', 'GET'])(create_room)
 
-main.route("/invite/", methods = ['POST'])(invite_members)
+main.route("/invite/<int:room_id>", methods = ['POST'])(invite_members)
 main.route('/invitaions/')(invitations)
 main.route('/accept_invitation/<int:invitation_id>/<decision>')(accept_invitation)
 
