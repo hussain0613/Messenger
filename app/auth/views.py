@@ -49,9 +49,9 @@ def sign_up():
             #db.session.add(Actions('create', 'user', current_user.id))
             #logout_user()
 
-            msg = Message('Dictionary: Welcome to Dictionary', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
+            msg = Message('BasicChatRoom: Welcome to BasicChatRoom', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
             msg.body = signup_mail_body.format(name = user.name, username = user.username)
-            #mail.send(msg)
+            mail.send(msg)
             flash(f"An email has been sent to your email :v", category="alert alert-info")
 
             flash("successfully created your id, u should get an email", category="alert alert-success")
@@ -120,7 +120,7 @@ def edit_role(pk):
                 #db.session.add(Actions('promote', 'users', current_user.id))
                 db.session.commit()
                 
-                msg = Message('Dictionary: Role Update', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
+                msg = Message('BasicChatRoom: Role Update', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
                 msg.body = f"your role has been updated to {user.role}.\n For furthur query contact one of the admins."
                 mail.send(msg)
                 
@@ -155,7 +155,7 @@ def request_password_reset():
             if user:
                 token = user.get_reset_token()
                 
-                msg = Message('Dictionary: Password Reset Request', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
+                msg = Message('BasicChatRoom: Password Reset Request', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
                 msg.body = reset_password_mail_body.format(reset_pass_url_with_token = url_for('auth.reset_password', token = token, _external=True))
                 mail.send(msg)
                 
@@ -217,7 +217,7 @@ def update_user_info():
                     flash("Successfully updated!")
                     if(user.email not in mails): 
                         mails.append(user.email)
-                    msg = Message('Dictionary: Information Update', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = mails)
+                    msg = Message('BasicChatRoom: Information Update', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = mails)
                     msg.body = update_user_info_mail_body.format(
                         name = user.name, username = user.username, email = user.email,
                         admin_emails = get_admin_emails()
@@ -250,7 +250,7 @@ def delete_user(username):
                 db.session.delete(user)
                 db.session.commit()
 
-                msg = Message('Dictionary: Account Deleted!', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
+                msg = Message('BasicChatRoom: Account Deleted!', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = [user.email])
                 msg.body = f"Your account has been deleted.\n If do not know why this has happend, contact the admins immedietly."
                 mail.send(msg)
 
@@ -266,7 +266,7 @@ def delete_user(username):
 @login_required
 def change_role_request():
 
-    msg = Message('Dictionary: Change Role Request', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = get_admin_emails())
+    msg = Message('BasicChatRoom: Change Role Request', sender = os.environ.get('MAIL_USERNAME')+"@gmail.com", recipients = get_admin_emails())
     msg.body = change_role_request_mail_body.format(username = current_user.username, role = current_user.role)
     mail.send(msg)
 

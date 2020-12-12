@@ -24,7 +24,7 @@ def role_required(*roles):
     return decorator
 
 
-signup_mail_body = """Welcome to Dictionary. It is in test version still now. So please have dhoirjo.
+signup_mail_body = """Welcome to BasicChatRoom. It is in test version still now. So please have dhoirjo.
 details:
 name: {name}
 username: {username}
