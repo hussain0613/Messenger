@@ -12,3 +12,4 @@ python-dotenv
 alembic
 flask-migrate
 gunicorn
+psycopg2
