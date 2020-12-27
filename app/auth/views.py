@@ -42,6 +42,7 @@ def sign_up():
             user = User()
             form.populate_obj(user)
             user.setPassword(form.password.data)
+            user.set_unique_id()
             
             db.session.add(user) 
             db.session.commit()
@@ -210,6 +211,9 @@ def update_user_info():
                     user.setPassword(form.password.data)
                 else:
                     user.setPassword(form.old_password.data)
+                
+                if form.email.data or form.username.data:
+                    user.set_unique_id()
 
                 #db.session.add(Actions("edit", "user", current_user.id))
                 try:
