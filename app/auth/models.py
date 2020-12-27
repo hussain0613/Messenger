@@ -27,6 +27,9 @@ class User(UserMixin, db.Model):
     last_modifier = db.relationship('User', backref = db.backref('users_modified',cascade="save-update"), cascade="save-update", foreign_keys=[last_modifier_id], remote_side = 'User.id', post_update = True)
     last_modified_date = db.Column(db.DateTime, default = datetime.datetime.utcnow())    
 
+    unique_id = db.Column(db.String(200), unique = True, nullable = False, index = True, default = username+ str(id) + email)
+
+
     def setPassword(self, psd):
         salt = bcrypt.gensalt()
         self.password = bcrypt.hashpw(psd.encode('utf-8'), salt).decode('utf-8')
@@ -47,9 +50,18 @@ class User(UserMixin, db.Model):
             return User.query.get(user_id)
         except Exception:
             return None
-        
+
+    def set_unique_id(self):
+        txt = self.username + str(datetime.datetime.utcnow()) + str(self.id) + str(datetime.datetime.utcnow()) + self.email ## aro kaj korte hbe      
+        self.unique_id = txt
+    
+    ## overriding UserMixin method
+    def get_id(self):
+        return self.unique_id
+
+
 
 
 @login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(uid):
+    return User.query.filter_by(unique_id = uid).first()

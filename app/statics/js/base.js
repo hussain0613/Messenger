@@ -48,15 +48,19 @@ function send_msg_json(url){
         'timestamp': Date.now() 
     }
     display(msg_dict)
+    msgs.push(msg_dict)
     inp.value = ''
 
     xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(this.readyState == 4 && this.status == 200){
             var resp = JSON.parse(this.responseText);
-            msg_dict['id'] = resp['id']
+            //msg_dict['id'] = resp['id']
             //msg_dict['timestamp'] = resp['timestamp']
-            msgs.push(msg_dict)
+            //msgs.push(msg_dict)
+            if (msgs.length>0){
+                msgs[msgs.length-1]['id'] = resp['id'];
+            }
             return false;
         }
     }
