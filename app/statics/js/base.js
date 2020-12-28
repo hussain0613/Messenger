@@ -3,11 +3,12 @@ var c = 0;
 
 function display(msg_dict){
     var str_c = c.toString();
-    var sender_id = 'sender_' + str_c;
+    //var sender_id = 'sender_' + str_c;
+    var sender_plink_id = 'sender_plink_' + str_c;
     var msg_id = 'msg_' + str_c;
     
     document.getElementById('display').innerHTML += `<div id = 'msg_div_${str_c}' style='visibility: hidden' class='clearfix container-fluid'>
-        <strong class = 'clearfix'><header id = 'sender_${str_c}'></header></strong><p id='msg_${str_c}' class = 'text-display'></p>
+        <strong class = 'clearfix'><header id = 'sender_${str_c}'><a id = 'sender_plink_${str_c}' href = '#'></a></header></strong><p id='msg_${str_c}' class = 'text-display'></p>
         <hr>
     </div>
     `;
@@ -17,7 +18,8 @@ function display(msg_dict){
         document.getElementById('sender_'+str_c).classList.add('float-right')
     }
     document.getElementById('msg_div_'+str_c).style.visibility = 'visible';
-    document.getElementById(sender_id).innerHTML = msg_dict['sender'];
+    document.getElementById(sender_plink_id).innerHTML = msg_dict['sender'];
+    document.getElementById(sender_plink_id).href = profile_link + msg_dict['sender'];//msg_dict['profile_link']
     document.getElementById(msg_id).innerHTML = msg_dict['msg'];
     ++c;
     str_c = c.toString();

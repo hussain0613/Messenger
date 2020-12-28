@@ -5,6 +5,7 @@
             var  get_msg_json_url = "{{url_for('main.get_msg_json', room_id = room.id)}}"
             var  send_msg_json_url = "{{url_for('main.send_msgs_json', room_id = room.id)}}"
             var check_room_url = "{{url_for('main.check_room', room_id = room.id)}}"
+            var profile_link = "{{url_for('auth.profile')}}";
         </script>
     {% endblock %}
 {% endif %}
