@@ -188,7 +188,7 @@ def check():
         rooms_with_new_msgs = []
         for msg in msgs:
             #print("***************************************************************************msg: ",msg)
-            rooms_with_new_msgs.append([msg[0].room.id])
+            rooms_with_new_msgs.append(msg[0].room.id)
         resp['rooms_with_new_msgs'] = rooms_with_new_msgs
         resp['timestamp'] = msgs[-1][0].timestamp
         db.session.commit()
