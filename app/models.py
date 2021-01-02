@@ -74,10 +74,10 @@ class P2RConnection(db.Model):
     
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("User.id"))
+    user_id = db.Column(db.Integer)#, db.ForeignKey("User.id"))
     user = db.relationship("User", backref = db.backref("p2rconn"))
 
-    room_id = db.Column(db.Integer, db.ForeignKey("room.id"))
+    room_id = db.Column(db.Integer)#, db.ForeignKey("room.id"))
     room = db.relationship("Room", backref = db.backref("p2rconn"))
 
     status = db.Column(db.String(50), default = 'none') ## seen, notified, none eita bhul jaygay disi.. eita receives e hbe.
