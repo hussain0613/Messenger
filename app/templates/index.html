@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% if current_user.is_authenticated %}
     {% block head %}
-        
+
     {% endblock %}
 {% endif %}
 {% block body %}
@@ -13,16 +13,13 @@
             </span>
         </div>
     {% else %}
+    <!-- >
     <h1>Rooms:</h1>
     <ul>
         {% for room in current_user.rooms %}
             <li><a href="{{ url_for('main.room_view', room_id = room.id)}} ">{{room.id}}:{{room.roomname}}</a></li>
         {% endfor %}
     </ul> 
-
-
-    <script type = "text/javascript">
-    </script>
-    
+    <!-->
     {% endif %}
 {% endblock %}

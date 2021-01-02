@@ -1,6 +1,6 @@
 from flask import Blueprint
 from .views import (index, room_view, create_room, delete_room, invite_members, invitations, accept_invitation, get_msg_json, send_msgs_json,
-                check_room)
+                check_room, check)
 
 main = Blueprint('main', __name__)
 
@@ -17,4 +17,5 @@ main.route('/accept_invitation/<int:invitation_id>/<decision>')(accept_invitatio
 main.route('/get_msg/json/<int:room_id>', methods = ['POST'])(get_msg_json)
 main.route('/send_msgs/json/<int:room_id>', methods = ['POST'])(send_msgs_json)
 main.route('/check_room/json/<int:room_id>', methods = ['POST'])(check_room)
+main.route('/check/json/', methods=['POST'])(check)
 

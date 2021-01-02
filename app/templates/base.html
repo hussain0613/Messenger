@@ -14,6 +14,7 @@
             {% if current_user.is_authenticated %}
                 var userid = {{current_user.id}}
                 var username = "{{current_user.username}}"
+                var current_room_id = null;
             {% else %}
                 var userid = null;
                 var username = null;
@@ -22,12 +23,13 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/base.js') }} "></script>
 
         <link rel="stylesheet" href="{{url_for('static', filename='css/base.css') }}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/sidenav.css') }}">
 
         {% block head %} {% endblock %}
     </head>
     
     <body>
-        <div class = "container-fluid p-0 sticky-top">
+        <div class = "container-fluid p-0 fixed-top">
             <nav class = "navbar navbar-expand-lg navbar-dark bg-dark">
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">ChatRoom</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +65,23 @@
             </nav>
         </div>
 
+        {% if current_user.is_authenticated %}
+            <div id="mySidenav" class="sidenav container-fluid">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                {% for room in current_user.rooms %}
+                    <a href="{{ url_for('main.room_view', room_id = room.id) }}" id = "side_nav_r{{room.id}}">{{room.id}}:{{room.roomname}}</a>
+                {% endfor %}
+
+                {% for i in range(20) %}
+                    <a href="#">{{i}}:habijabi</a>
+                {% endfor %}
+            </div>
+
+            <span class = "container-fluid" style="font-size:30px;cursor:pointer;margin-left:1%;position: fixed;" onclick="openNav()" id="sidenav_bt">&#9776;
+                <span id="sidenav_indicator"></span>
+            </span>
+        {% endif %}
+        
         <div id = "alerts" class = "container-fluid align-center col-sm-3 mt-5">
             {% with msgs = get_flashed_messages(with_categories = true) %}
                     {% for category, msg in msgs %}
@@ -74,7 +93,7 @@
                     {% endfor %}
             {% endwith %}
         </div>
-        <div id = "body" class="container-fluid fill">
+        <div id = "body" class="container-fluid fill" style="margin:3%;">
             {% block body %}
             {% endblock %}
         </div>
@@ -83,6 +102,11 @@
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+        <script type="text/javascript" src="{{ url_for('static', filename='js/sidenav.js') }} "></script>
+        {% if current_user.is_authenticated %}
+            <script type='text/javascript'>
+                check( "{{ url_for('main.check') }}" );
+            </script>
+        {% endif %}
     </body>
 </html>

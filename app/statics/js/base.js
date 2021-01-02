@@ -1,5 +1,6 @@
 var msgs = []
 var c = 0;
+var last_update_ts = 0.0;
 
 function display(msg_dict){
     var str_c = c.toString();
@@ -139,4 +140,50 @@ function check_room(url){
     }
 }
 
+
+function check(url){
+    if(msgs.length>0){
+        var last_msg = msgs[msgs.length-1]
+        var last_ts = last_msg['timestamp']
+        var last_msg_id = last_msg['id']
+    }else{
+        var last_msg = null;
+        var last_ts = 0.0;
+        var last_msg_id = null
+    }
+
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            var resp = JSON.parse(this.responseText);
+            
+            if (resp['status'] == '200'){
+                //notify user
+                //console.log(resp['roomwise_status'])
+                if(resp['rooms_with_new_msgs'].length != 1 && resp['rooms_with_new_msgs'][0] != current_room_id){
+                    document.getElementById("sidenav_indicator").classList.add('dot');
+                }
+                for(rid of resp['rooms_with_new_msgs']){
+                    if(rid != current_room_id){
+                        document.getElementById('side_nav_r'+rid).style.fontWeight = "bold";
+                    }
+                }
+                
+                last_update_ts = resp['timestamp']
+                return check(url);
+            }
+            else{
+                return check(url);
+            }
+        }
+    }
+    xhttp.open('POST', url, true);
+    //if(last_update_ts){
+        //xhttp.send(JSON.stringify(last_msg_id))
+        xhttp.send(JSON.stringify(last_update_ts))
+    //}else{
+        //xhttp.send(JSON.stringify(-1))
+    //    xhttp.send(JSON.stringify(0.0))
+    //}
+}
 

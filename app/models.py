@@ -16,6 +16,8 @@ class Message(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey("room.id"), nullable = False, default = None)
     room = db.relationship("Room", backref = db.backref("messages"))
 
+    receivers = db.relationship("User", secondary = "receivers", backref = db.backref("messages_received"))
+
     timestamp = db.Column(db.Float, nullable = False, default = time.time(), index = True)
 
     @staticmethod
@@ -72,10 +74,10 @@ class P2RConnection(db.Model):
     
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("room.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("User.id"))
     user = db.relationship("User", backref = db.backref("p2rconn"))
 
-    room_id = db.Column(db.Integer, db.ForeignKey("User.id"))
+    room_id = db.Column(db.Integer, db.ForeignKey("room.id"))
     room = db.relationship("Room", backref = db.backref("p2rconn"))
 
     status = db.Column(db.String(50), default = 'none') ## seen, notified, none eita bhul jaygay disi.. eita receives e hbe.
@@ -92,10 +94,10 @@ class Receivers(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
 
     message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
-    message = db.relationship("Message", backref = db.backref("receivers")) ## the backref names are not 'right'
+    message = db.relationship("Message", backref = db.backref("receivers_obj")) ## the backref names are not 'right'
 
     receiver_id = db.Column(db.Integer, db.ForeignKey('User.id'))
-    receiver = db.relationship('User', backref = db.backref('received_messages'))
+    receiver = db.relationship('User', backref = db.backref('receiver_obj'))
 
 
 class Invitation(db.Model):

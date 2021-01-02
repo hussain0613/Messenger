@@ -3,11 +3,11 @@ import time
 
 from flask import render_template, redirect, flash, request, Response, url_for, jsonify
 from flask_login import current_user, login_required
-from sqlalchemy import text, and_
+from sqlalchemy import text, and_, update
 
 from . import db
 from .auth.models import User
-from .models import Message, Room, Invitation
+from .models import Message, Room, Invitation, P2RConnection, Receivers
 
 from .forms import CreateRoomForm
 from .utils import room_membership_required
@@ -57,7 +57,10 @@ def invite_members(room_id):
     guest_username = request.data.decode()
     user = User.query.filter_by(username = guest_username).first()
     if not user:
-        return '404'
+        return jsonify({'status': 'invalid user'})
+    if(Invitation.query.filter(and_(Invitation.guest_id == user.id, Invitation.room_id == room_id))).all():
+        return jsonify({'status': 'already sent'})
+    
     inv = Invitation()
     inv.host_id = current_user.id
     inv.guest_id = user.id
@@ -65,7 +68,7 @@ def invite_members(room_id):
 
     db.session.add(inv)
     db.session.commit()
-    return '200'
+    return jsonify({'status': '200'})
 
 
 @login_required
@@ -113,7 +116,12 @@ def get_msg_json(room_id):
     msg.room_id = room_id
     ## ts = time.time()
     msg.timestamp = msg_dict['timestamp']## ts
+    room = Room.query.get(room_id)
+
+    msg.receivers.extend([member for member in room.members if member.id != current_user.id])
     
+    db.session.query(P2RConnection).filter(and_(P2RConnection.room_id == room_id, P2RConnection.user_id != current_user.id)).update({P2RConnection.status: "none"})
+
     db.session.add(msg)
     db.session.commit()
 
@@ -131,7 +139,9 @@ def send_msgs_json(room_id):
     msgs = list(map(Message.as_dict, 
                 Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_ts}') ) ) 
                 ))
-
+    p2rconn = P2RConnection.query.filter_by(room_id = room_id, user_id=current_user.id).first()
+    p2rconn.status = "seen" ## pore client theke feedback er bhittite korar bebostha korte hbe..
+    db.session.commit()
     return jsonify(msgs)
 
 
@@ -144,17 +154,45 @@ def check_room(room_id):
     #last_msg_ts = float(request.data.decode())
     last_msg_id = int(request.data.decode())
     
-    msgs = list(map(Message.as_dict, 
-                Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ) 
-                ))
+    msgs = Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ).all()
     while time.time()-t < 15 and not msgs:
-        msgs = list(map(Message.as_dict, 
-                Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ) 
-                ))
+        msgs = Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ).all()
     if msgs:
         code = '200'
     else:
         code = '304'
     return jsonify(code)
+
+
+@login_required
+def check():
+    t = time.time()
+    #last_msg_ts = float(request.data.decode())
+    #last_msg_id = int(request.data.decode())
+    last_update_ts = float(request.data.decode())
     
+    msgs = db.session.query(Message, Receivers, P2RConnection).filter(and_(
+        Message.id == Receivers.message_id, Receivers.receiver_id == current_user.id, Message.timestamp > last_update_ts,
+        P2RConnection.room_id == Message.room_id, P2RConnection.status != 'seen'
+        )).all()
+    while time.time()-t < 15 and not msgs:
+        msgs = db.session.query(Message, Receivers, P2RConnection).filter(and_(
+        Message.id == Receivers.message_id, Receivers.receiver_id == current_user.id, Message.timestamp > last_update_ts,
+        P2RConnection.room_id == Message.room_id, P2RConnection.status != 'seen'
+        )).all()
+    resp = {}
+    if msgs:
+        resp['status'] = 200
+        #update(P2RConnection).where(and_(P2RConnection.user_id == current_user.id, P2RConnection.status != "seen")).values(status = "notified")
+        db.session.query(P2RConnection).filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.status != 'seen')).update({P2RConnection.status: "notified"})
+        rooms_with_new_msgs = []
+        for msg in msgs:
+            #print("***************************************************************************msg: ",msg)
+            rooms_with_new_msgs.append([msg[0].room.id])
+        resp['rooms_with_new_msgs'] = rooms_with_new_msgs
+        resp['timestamp'] = msgs[-1][0].timestamp
+        db.session.commit()
+    else:
+        resp['status'] = 304
+    return jsonify(resp)
     
