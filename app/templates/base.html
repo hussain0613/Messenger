@@ -69,11 +69,7 @@
             <div id="mySidenav" class="sidenav container-fluid">
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
                 {% for room in current_user.rooms %}
-                    <a href="{{ url_for('main.room_view', room_id = room.id) }}" id = "side_nav_r{{room.id}}">{{room.id}}:{{room.roomname}}</a>
-                {% endfor %}
-
-                {% for i in range(20) %}
-                    <a href="#">{{i}}:habijabi</a>
+                    <a href="{{ url_for('main.room_view', room_id = room.id) }}" id = "side_nav_r{{room.id}}">{{room.roomname}}</a>
                 {% endfor %}
             </div>
 
