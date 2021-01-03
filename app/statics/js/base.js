@@ -8,8 +8,17 @@ function display(msg_dict){
     var sender_plink_id = 'sender_plink_' + str_c;
     var msg_id = 'msg_' + str_c;
     
-    document.getElementById('display').innerHTML += `<div id = 'msg_div_${str_c}' style='visibility: hidden' class='clearfix container-fluid'>
-        <strong class = 'clearfix'><header id = 'sender_${str_c}'><a id = 'sender_plink_${str_c}' href = '#'></a></header></strong><p id='msg_${str_c}' class = 'text-display'></p>
+    document.getElementById('display').innerHTML += `<div id = 'msg_div_${str_c}' style='visibility: hidden' class='container-fluid'>
+        <div class = 'clearfix'>
+            <header id = 'sender_${str_c}'>
+                <span id = "time_1_${str_c}" style="font-size:.75em;"></span>
+                <strong><a id = 'sender_plink_${str_c}' href = '#'></a></strong>
+                <span id = "time_2_${str_c}" style="font-size:.8em;"></span>
+            </header>
+        </div>
+        <div class = 'clearfix'>
+            <p id='msg_${str_c}' class = 'text-display'></p>
+        </div>
         <hr>
     </div>
     `;
@@ -17,6 +26,14 @@ function display(msg_dict){
     if(msg_dict['sender_id'] == userid){
         document.getElementById('msg_'+str_c).classList.add('float-right')
         document.getElementById('sender_'+str_c).classList.add('float-right')
+        //document.getElementById("time_"+str_c).classList.add('float-right')
+        //document.getElementById('msg_div_'+str_c).classList.add('float-right')
+        var date = new Date(msg_dict['timestamp']);
+        document.getElementById("time_1_"+str_c).innerHTML = date.toLocaleString();
+    }
+    else{
+        var date = new Date(msg_dict['timestamp']);
+        document.getElementById("time_2_"+str_c).innerHTML = date.toLocaleString();
     }
     document.getElementById('msg_div_'+str_c).style.visibility = 'visible';
     document.getElementById(sender_plink_id).innerHTML = msg_dict['sender'];
@@ -176,12 +193,6 @@ function check(url){
         }
     }
     xhttp.open('POST', url, true);
-    //if(last_update_ts){
-        //xhttp.send(JSON.stringify(last_msg_id))
-        xhttp.send(JSON.stringify(last_update_ts))
-    //}else{
-        //xhttp.send(JSON.stringify(-1))
-    //    xhttp.send(JSON.stringify(0.0))
-    //}
+    xhttp.send(JSON.stringify(last_update_ts))
 }
 
