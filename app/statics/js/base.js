@@ -158,10 +158,8 @@ function check(url){
             var resp = JSON.parse(this.responseText);
             
             if (resp['status'] == '200'){
-                //notify user
-                //console.log(resp['roomwise_status'])
-                if(resp['rooms_with_new_msgs'].length != 1 && resp['rooms_with_new_msgs'][0] != current_room_id){
-                    document.getElementById("sidenav_indicator").classList.add('dot');
+                if(!(resp['rooms_with_new_msgs'].length == 1 && resp['rooms_with_new_msgs'][0] == current_room_id)){ 
+                   document.getElementById("sidenav_indicator").classList.add('dot');
                 }
                 for(rid of resp['rooms_with_new_msgs']){
                     if(rid != current_room_id){
