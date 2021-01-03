@@ -173,12 +173,12 @@ def check():
     
     msgs = db.session.query(Message, Receivers, P2RConnection).filter(and_(
         Message.id == Receivers.message_id, Receivers.receiver_id == current_user.id, Message.timestamp > last_update_ts,
-        P2RConnection.room_id == Message.room_id, P2RConnection.status != 'seen'
+        P2RConnection.room_id == Message.room_id, P2RConnection.user_id == current_user.id, P2RConnection.status != 'seen'
         )).all()
     while time.time()-t < 15 and not msgs:
         msgs = db.session.query(Message, Receivers, P2RConnection).filter(and_(
         Message.id == Receivers.message_id, Receivers.receiver_id == current_user.id, Message.timestamp > last_update_ts,
-        P2RConnection.room_id == Message.room_id, P2RConnection.status != 'seen'
+        P2RConnection.room_id == Message.room_id, P2RConnection.user_id == current_user.id, P2RConnection.status != 'seen'
         )).all()
     resp = {}
     if msgs:
