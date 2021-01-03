@@ -185,11 +185,11 @@ def check():
         resp['status'] = 200
         #update(P2RConnection).where(and_(P2RConnection.user_id == current_user.id, P2RConnection.status != "seen")).values(status = "notified")
         db.session.query(P2RConnection).filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.status != 'seen')).update({P2RConnection.status: "notified"})
-        rooms_with_new_msgs = []
+        rooms_with_new_msgs = set()
         for msg in msgs:
             #print("***************************************************************************msg: ",msg)
-            rooms_with_new_msgs.append(msg[0].room.id)
-        resp['rooms_with_new_msgs'] = rooms_with_new_msgs
+            rooms_with_new_msgs.add(msg[0].room.id)
+        resp['rooms_with_new_msgs'] = list(rooms_with_new_msgs)
         resp['timestamp'] = msgs[-1][0].timestamp
         db.session.commit()
     else:
