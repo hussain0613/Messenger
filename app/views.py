@@ -139,7 +139,7 @@ def send_msgs_json(room_id):
     msgs = list(map(Message.as_dict, 
                 Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_ts}') ) ) 
                 ))
-    p2rconn = P2RConnection.query.filter_by(room_id = room_id, user_id=current_user.id).first()
+    p2rconn = P2RConnection.query.filter(and_(P2RConnection.room_id == room_id, P2RConnection.user_id== current_user.id)).first()
     p2rconn.status = "seen" ## pore client theke feedback er bhittite korar bebostha korte hbe..
     db.session.commit()
     return jsonify(msgs)
