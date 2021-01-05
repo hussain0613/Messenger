@@ -43,7 +43,7 @@
             <hr>
             {% for member in room.members %}
                 <div>
-                    <a href="{{ url_for('auth.profile', id = member.id) }}" id = "side_nav_m{{member.id}}">
+                    <a href="{{ url_for('auth.profile', username = member.username) }}" id = "side_nav_m{{member.id}}">
                         {{member.username}}
                     </a>
                     
