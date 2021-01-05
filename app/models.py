@@ -2,6 +2,7 @@ import time
 
 from .auth.models import User
 from . import db
+from  sqlalchemy import and_, text
 
 class Message(db.Model):
     __tablename__ = "message"
@@ -10,10 +11,10 @@ class Message(db.Model):
 
     message = db.Column(db.Text)
 
-    sender_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable = False, default = None)
+    sender_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable = True, default = 'deleted_user')
     sender = db.relationship("User", backref = db.backref("sent_messages"))
 
-    room_id = db.Column(db.Integer, db.ForeignKey("room.id"), nullable = False, default = None)
+    room_id = db.Column(db.Integer, db.ForeignKey("room.id"), nullable = True, default = 'deleted_room')
     room = db.relationship("Room", backref = db.backref("messages"))
 
     receivers = db.relationship("User", secondary = "receivers", backref = db.backref("messages_received"))
@@ -50,6 +51,12 @@ class Room(db.Model):
             return next(reversed(self.messages))
         else:
             return None
+    def get_p2r_obj(self, member_id):
+        p2r = db.session.query(P2RConnection).filter(and_(
+            text(f"p2rconn.room_id = {self.id}"),
+            text(f"p2rconn.user_id = {member_id}")
+            )).first()
+        return p2r
 
 class P2PConnection(db.Model):
 

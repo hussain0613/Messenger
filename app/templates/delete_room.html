@@ -1,1 +1,33 @@
 {% extends "base.html" %}
+
+{% block body %}
+<h3>Delete Room {{ room.roomname }}</h3>
+<hr>
+<div>
+    <h5>Current Members of the room: </h5>
+    {% for member in room.members %}
+        <a href = "{{ url_for('auth.profile', id = member.id) }}" style="margin-left:5%">{{ member.username }}</a><br>
+    {% endfor %}
+</div>
+<br><br>
+<div>
+    Are you sure you want to delete?<br><br>
+    <a class="btn btn-dark" href="{{ url_for('main.room_view', room_id = room.id) }}">No, Go back</a>
+    <span class="btn btn-danger" id='yespan'>Yes!</span>
+</div>
+
+<br><br>
+<div class = 'form form-group' id = 'delete-room-form-div' style="display: none;">
+    <form class = 'form-group' action = "{{ url_for('main.delete_room', room_id = room.id) }}" method = "POST">
+        {{ form.csrf_token }}
+        <div class='form-group'>Enter room name: {{form.roomname}}</div>
+        <div class='form-group'>Password: {{form.password}}</div>
+        <div class='form-group'>{{ form.delete(class = 'btn btn-danger') }}</div>
+    </form>
+</div>
+<script type="text/javascript">
+    document.getElementById('yespan').onclick = function(){
+        document.getElementById('delete-room-form-div').style.display = 'block';
+    }
+</script>
+{% endblock %}

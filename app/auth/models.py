@@ -2,6 +2,7 @@ from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import bcrypt
 import os
+import time
 import datetime
 
 from . import db, login
@@ -52,7 +53,7 @@ class User(UserMixin, db.Model):
             return None
 
     def set_unique_id(self):
-        txt = self.username + str(datetime.datetime.utcnow()) + str(self.id) + str(datetime.datetime.utcnow()) + self.email ## aro kaj korte hbe      
+        txt = self.username + str(time.time()) + str(self.id) + str(time.time()) + self.email ## aro kaj korte hbe      
         self.unique_id = txt
     
     ## overriding UserMixin method

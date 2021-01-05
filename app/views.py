@@ -21,8 +21,9 @@ def index():
 @login_required
 def room_view(room_id):
     room = Room.query.get(room_id)
+    p2rconn = P2RConnection.query.filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.room_id == room_id)).first()
     #print("*********************** room_view: ", session['timestamps'])
-    return render_template('room_view.html', room = room, title = f"ChatRoom: {room.roomname}")
+    return render_template('room_view.html', room = room, title = f"ChatRoom: {room.roomname}", p2rconn_obj = p2rconn)
 
 
 @login_required
@@ -49,22 +50,28 @@ def create_room():
 @login_required
 def delete_room(room_id):
     room = Room.query.get(room_id)
-    if not room:
+    p2r = P2RConnection.query.filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.room_id == room_id)).first()
+    if not room or not p2r:
         return "Invalid room"
-    if room.creator_id != current_user.id:
+    if room.creator_id != current_user.id and p2r.role != 'admin':
         return "You don't have permission"
     
-    form = DeleteRoomForm()
-    if form.validate_on_submit():
-        if(current_user.checkPassword(form.password.data)):
-            db.session.delete(room)
-            db.session.commit()
+    form = DeleteRoomForm(request.form)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if current_user.checkPassword(form.password.data):
+                db.session.delete(p2r)
+                db.session.delete(room)
+                db.session.commit()
 
-            flash("Room deleted successfully!", category="alert alert-success")
-            return redirect(url_for("main.index"))
+                flash("Room deleted successfully!", category="alert alert-success")
+                return redirect(url_for("main.index"))
+            else:
+                flash("Wrong Password!", category="alert alert-warning")
         else:
-            flash("Wrong Password!")
-    return render_template("delete_room.html", room = room, title = "ChatRoom: Delete Room!")
+            flash("something went wrong!", category="alert alert-info")
+    
+    return render_template("delete_room.html", room = room, title = "ChatRoom: Delete Room!", form = form)
 
     
     
@@ -77,13 +84,16 @@ def invite_members(room_id):
     user = User.query.filter_by(username = guest_username).first()
     if not user:
         return jsonify({'status': 'invalid user'})
-    if(Invitation.query.filter(and_(Invitation.guest_id == user.id, Invitation.room_id == room_id))).all():
-        return jsonify({'status': 'already sent'})
+    if P2RConnection.query.filter(and_(P2RConnection.user_id == user.id, P2RConnection.room_id == room_id)).first():
+        return jsonify({'status': 'already member'})
+    if(Invitation.query.filter(and_(Invitation.guest_id == user.id, Invitation.room_id == room_id, Invitation.status == 'pending'))).first():
+        return jsonify({'status': 'already one pending'})
     
     inv = Invitation()
     inv.host_id = current_user.id
     inv.guest_id = user.id
     inv.room_id = room_id
+    inv.status = 'pending'
 
     db.session.add(inv)
     db.session.commit()
@@ -110,14 +120,50 @@ def accept_invitation(invitation_id, decision):
 
 @room_membership_required()
 @login_required
-def delete_members():
-    pass
+def remove_member(room_id, member_id):
+    room = Room.query.get(room_id)
+    user = User.query.get(member_id)
+    p2r = P2RConnection.query.filter(and_(P2RConnection.user_id == member_id, P2RConnection.room_id == room_id)).first()
+    cu2r = P2RConnection.query.filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.room_id == room_id)).first()
+    if not p2r:
+        return 'Room-User relation does not exist'
+    
+    if member_id == current_user.id or cu2r.role =='admin' or room.creator_id  == current_user.id:
+        db.session.delete(p2r)
+        db.session.commit()
+        if member_id == current_user.id:
+            flash(f"Left room {room.roomname}", category="alert alert-info")
+            return redirect(url_for('main.index'))
+        else:
+            flash(f"Kicked member {user.username}", category="alert alert-info")
+            return redirect(url_for('main.room_view', room_id = room_id))
+
+    return 'Permission denied!'
 
 
 @room_membership_required()
 @login_required
-def leave_room():
-    pass
+def make_admin(room_id, member_id): ## or remove_as_admin
+    room = Room.query.get(room_id)
+    user = User.query.get(member_id)
+    p2r = P2RConnection.query.filter(and_(P2RConnection.user_id == member_id, P2RConnection.room_id == room_id)).first()
+    cu2r = P2RConnection.query.filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.room_id == room_id)).first()
+    
+    if not p2r:
+        return 'Room-User relation does not exist'
+    
+    if cu2r.role =='admin' or room.creator_id  == current_user.id:
+        if p2r.role == 'admin':
+            p2r.role = 'member'
+            db.session.commit()
+            flash(f"Removed member {user.username} from admin panel", category="alert alert-info")
+        else:
+            p2r.role = 'admin'
+            db.session.commit()
+            flash(f"Made member {user.username} an admin", category="alert alert-info")
+        return redirect(url_for('main.room_view', room_id = room_id))
+
+    return 'Permission denied!'
 
 @login_required
 def invitations():

@@ -13,6 +13,7 @@ class InvitationForm(FlaskForm):
     submit = SubmitField(label='Invite')
 
 class DeleteRoomForm(FlaskForm):
+    roomname = StringField(label='Room name: ', validators=[DataRequired()])
     password = PasswordField(label="Confirm: ", validators=[DataRequired()])
     delete = SubmitField(label="Delete!")
 
