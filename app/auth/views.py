@@ -21,11 +21,11 @@ def profile(username = None):
         user = current_user
     else:
         user = User.query.filter_by(username = username).first()
-    return render_template("profile.html", user = user)
+    return render_template("profile.html", user = user, title = f"ChatRoom: User-{user.username}")
 
 @login_required
 def users():
-    return render_template("users.html", users = User.query.all())
+    return render_template("users.html", users = User.query.all(), title = "Chatroom: Users")
 
 
 
@@ -63,7 +63,7 @@ def sign_up():
             flash("username/email already exists", category="alert alert-danger")
 
     
-    return render_template('signup.html', form = form)
+    return render_template('signup.html', form = form, title = "ChatRoom: SignUp")
 
 
 
@@ -94,7 +94,7 @@ def login():
 
     form = LogInForm(request.form)
 
-    return render_template("login.html", form = form)
+    return render_template("login.html", form = form, title = "ChatRoom: Login")
 
 
 def logout():
@@ -136,7 +136,7 @@ def edit_role(pk):
     form = EditRoleForm(request.form)
     form.role.data = user.role
 
-    return render_template("edit_role.html", form = form, user = user)
+    return render_template("edit_role.html", form = form, user = user, title = "ChatRoom: Edit Role")
     
 
 
@@ -170,7 +170,7 @@ def request_password_reset():
 
     form = RequestPasswordResetForm(request.form)
 
-    return render_template("request_password_reset.html", form = form)
+    return render_template("request_password_reset.html", form = form, title = "ChatRoom: Request Password Reset!")
 
 
 def reset_password(token):
@@ -193,7 +193,7 @@ def reset_password(token):
             flash("Password reset successful")
             return redirect(url_for('auth.login'))
     
-    return render_template('reset_password.html', form = form, token = token)
+    return render_template('reset_password.html', form = form, token = token, title= "ChatRoom: Reset Password")
 
 
 @login_required
@@ -238,7 +238,7 @@ def update_user_info():
         else:
             flash("Something wrong with form validation")
     
-    return render_template("update_user_info.html", form = form)
+    return render_template("update_user_info.html", form = form, title="ChatRoom: Update Info")
 
 @role_required('admin', 'self')
 @login_required
@@ -264,7 +264,7 @@ def delete_user(username):
                 flash("wrong password")
         else:
             flash("something went wong with form submission")
-    return render_template('delete_user.html', form = form, username = username)
+    return render_template('delete_user.html', form = form, username = username, title = "ChatRoom: Delete Account!")
 
 
 @login_required

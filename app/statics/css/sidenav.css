@@ -4,17 +4,24 @@
     position: fixed;
     z-index: 1;
     top: auto;
-    left: auto;
+    /*left: auto;*/
     background-color: #343a40;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
   }
+
+  .sidenav-left{
+    left: auto;
+  }
   
+  .sidenav-right{
+    right: 0;
+  }
   .sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 18px;
     color: #818181;
     display: block;
     transition: 0.3s;
@@ -29,7 +36,13 @@
     top: 0;
     right: 25px;
     font-size: 36px;
-    margin-left: 50px;
+  }
+  .sidenav-right .closebtn {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    font-size: 36px;
+    margin-right: 50px;
   }
   
   @media screen and (max-height: 450px) {

@@ -8,7 +8,10 @@
 <hr><hr><br><br>
     {% if users %}
         {% for user in users %}
-            {{user.id}}. {{user.role}}{% if user.id == current_user.id %} (Self){% endif %}
+            {% if current_user.role.lower() == 'admin' %}
+                {{user.id}}. {{ user.role }}
+            {% endif %}
+            {% if user.id == current_user.id %} (Self){% endif %}
             <h3><a href = "{{ url_for('auth.profile', username = user.username) }}" >{{ user.username }}</a></h3>
             {% if current_user.role.lower() == 'admin' %}
                 <a href = " {{url_for('auth.edit_role', pk = user.id ) }}">edit_role</a>

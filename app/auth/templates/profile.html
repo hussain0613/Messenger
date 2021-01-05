@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 
-{% block subtitle %} Pichon-User {% endblock %}
-
 {% block body%}
     {% if user %}
-        {{user.id}}. {{ user.role }}<h1>{{ user.username }}</h1>
+        {% if current_user.role.lower() == 'admin' %}
+            {{user.id}}. {{ user.role }}
+        {% endif %}
+        <h1>{{ user.username }}</h1>
         {% if current_user.role.lower() == 'admin' %}
             | <a href = " {{url_for('auth.edit_role', pk = user.id ) }}">edit_role</a> |
         {% endif %}
         {% if user.id == current_user.id %}
             | <a href = " {{url_for('auth.update_user_info') }}">update info</a> | 
-            <a href = " {{url_for('auth.change_role_request') }}">ask for change of role</a>
+            <!--a href = " {{url_for('auth.change_role_request') }}">ask for change of role</a -->
         {% endif %}
 
         {% if user.id == current_user.id %}
@@ -22,7 +23,9 @@
         <hr>
        
         <p>Name: {{ user.name }}</p>
-        <p>email: {{ user.email }}</p>
+        {% if user.id == current_user.id %}
+            <p>email: {{ user.email }}</p>
+        {% endif %}
         
         <p>Created by {{ user.creator.username }} on {{ user.creation_date}}</p>
         <p>Last modified by {{ user.last_modifier.username }} on {{ user.last_modified_date}}</p>

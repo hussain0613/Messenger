@@ -9,12 +9,12 @@ from . import db
 from .auth.models import User
 from .models import Message, Room, Invitation, P2RConnection, Receivers
 
-from .forms import CreateRoomForm
+from .forms import CreateRoomForm, DeleteRoomForm
 from .utils import room_membership_required
 
 
 def index():
-    return render_template('index.html')
+    return render_template('index.html', title = "ChatRoom")
 
 
 @room_membership_required()
@@ -22,7 +22,7 @@ def index():
 def room_view(room_id):
     room = Room.query.get(room_id)
     #print("*********************** room_view: ", session['timestamps'])
-    return render_template('room_view.html', room = room)
+    return render_template('room_view.html', room = room, title = f"ChatRoom: {room.roomname}")
 
 
 @login_required
@@ -41,14 +41,33 @@ def create_room():
         flash('Room created successfully!', category='alert alert-success')
         return redirect(url_for('main.room_view', room_id = room.id))
 
-    return render_template('create_room.html', form = form)
+    return render_template('create_room.html', form = form, title = "ChatRoom: Create Room")
 
 
 
-
+@room_membership_required()
 @login_required
-def delete_room():
-    pass
+def delete_room(room_id):
+    room = Room.query.get(room_id)
+    if not room:
+        return "Invalid room"
+    if room.creator_id != current_user.id:
+        return "You don't have permission"
+    
+    form = DeleteRoomForm()
+    if form.validate_on_submit():
+        if(current_user.checkPassword(form.password.data)):
+            db.session.delete(room)
+            db.session.commit()
+
+            flash("Room deleted successfully!", category="alert alert-success")
+            return redirect(url_for("main.index"))
+        else:
+            flash("Wrong Password!")
+    return render_template("delete_room.html", room = room, title = "ChatRoom: Delete Room!")
+
+    
+    
 
 
 @room_membership_required()
@@ -102,7 +121,7 @@ def leave_room():
 
 @login_required
 def invitations():
-    return render_template('invitations.html')
+    return render_template('invitations.html', title = "ChatRoom: Invitations")
 
 
 @room_membership_required()

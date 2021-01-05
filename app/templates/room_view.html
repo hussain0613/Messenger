@@ -21,7 +21,7 @@
     {% else %}
     
     {% if room.creator_id == current_user.id %}
-        <div id = "admin_panel" class = "container-fluid">
+        <div id = "admin-panel" class = "container-fluid">
             <script>
                 function InviteFormVisibility(){
                     elem2 = document.getElementById('invite_msg')
@@ -79,6 +79,19 @@
             </div>
         </div>
     {% endif %}
+    <div id='panel'>
+        <div id="mySidenav2" class="sidenav sidenav-right">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav_r()">&times;</a>
+            <h4 style="margin-left: 15px;color:#818181">Members:</h4>
+            <hr>
+            {% for member in room.members %}
+                <a href="{{ url_for('auth.profile', id = member.id) }}" id = "side_nav_m{{member.id}}">{{member.username}}</a>
+            {% endfor %}
+        </div>
+
+        <span style="font-size:30px;cursor:pointer;right:1.5%;position: fixed;" onclick="openNav_r()" id="sidenav_bt2">&#9776;
+        </span>
+    </div>
     
     <div id = 'messenger' class = "container-fluid clearfix">
         <div id = 'display' class = 'container-fluid'>

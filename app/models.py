@@ -81,6 +81,7 @@ class P2RConnection(db.Model):
     room = db.relationship("Room", backref = db.backref("p2rconn"))
 
     status = db.Column(db.String(50), default = 'none') ## seen, notified, none eita bhul jaygay disi.. eita receives e hbe.
+    role = db.Column(db.String(50), default = 'member')
 
 
     __table_args__ = (db.UniqueConstraint('user_id', 'room_id', name = 'p2r_connection'),)
