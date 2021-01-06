@@ -109,4 +109,14 @@ function toggle_admin_control(m_id){
 }
 
 
+function showRename(){
+  elem = document.getElementById('rename-form')
+  if (elem.style.display == 'none'){
+    elem.style.display = 'block'
+  }
+  else{
+    elem.style.display = 'none'
+  }
+}
+
   

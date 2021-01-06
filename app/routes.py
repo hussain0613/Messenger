@@ -1,6 +1,6 @@
 from flask import Blueprint
 from .views import (index, room_view, create_room, delete_room, invite_members, invitations, accept_invitation, get_msg_json, send_msgs_json,
-                check_room, check, delete_room, remove_member, make_admin)
+                check_room, check, delete_room, remove_member, make_admin, rename_room)
 
 main = Blueprint('main', __name__)
 
@@ -22,4 +22,5 @@ main.route('/check/json/', methods=['POST'])(check)
 main.route('/room/<int:room_id>/delete/', methods = ["GET", "POST"])(delete_room)
 main.route('/room/<int:room_id>/remove_member/<int:member_id>/')(remove_member)
 main.route('/room/<int:room_id>/make_admin/<int:member_id>/')(make_admin)
+main.route('/room/<int:room_id>/rename/', methods=["POST"])(rename_room)
 

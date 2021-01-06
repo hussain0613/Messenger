@@ -165,6 +165,22 @@ def make_admin(room_id, member_id): ## or remove_as_admin
 
     return 'Permission denied!'
 
+
+@room_membership_required()
+@login_required
+def rename_room(room_id): ## or remove_as_admin
+    room = Room.query.get(room_id)
+    cu2r = P2RConnection.query.filter(and_(P2RConnection.user_id == current_user.id, P2RConnection.room_id == room_id)).first()
+    new_name = request.form.get('rname')
+    if cu2r.role =='admin' or room.creator_id  == current_user.id:
+        room.roomname = new_name
+        db.session.commit()
+        flash("Successfully renamed room", category="alert alert-success")
+        return redirect(url_for('main.room_view', room_id = room_id))
+
+    return 'Permission denied!'
+
+
 @login_required
 def invitations():
     return render_template('invitations.html', title = "ChatRoom: Invitations")
