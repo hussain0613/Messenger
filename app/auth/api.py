@@ -8,7 +8,7 @@ def login_api():
     resp.content_type = "text/json"
     resp_data = {}
     if current_user.is_authenticated:
-        resp_data = {"Status":"Success", "Message":f"Alredy logged in as {current_user.username}"}
+        resp_data = {"Status":"Success", "Message":f"Alredy logged in as {current_user.username}", "uname": current_user.username, "name": current_user.name}
         resp.set_data(json.dumps(resp_data))
         return resp
 
@@ -22,7 +22,7 @@ def login_api():
 
         if user and (user.checkPassword(psd)):
             login_user(user, remember= rm)
-            resp_data = {"Status":"Success", "Message":f"Succesfully logged in as {un}"}
+            resp_data = {"Status":"Success", "Message":f"Succesfully logged in as {un}", "uname": un, "name": user.name}
             resp.set_data(json.dumps(resp_data))
             ##if(body):
             ##    resp.set_cookie("user", body.split(':')[1])
