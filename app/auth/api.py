@@ -25,7 +25,7 @@ def login_api():
             resp_data = {"Status":"Success", "Message":f"Succesfully logged in as {un}", "uname": un, "name": user.name}
             resp.set_data(json.dumps(resp_data))
             ##if(body):
-            ##    resp.set_cookie("user", body.split(':')[1])
+            ##    resp.set_cookie("user", body.split(':')[1]) 
             return resp
         else:
             resp_data = {"Status": "Failed", "Message":"invalid username and/or password!"}
