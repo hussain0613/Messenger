@@ -18,7 +18,7 @@ def index_api():
 
     json_data["rooms"] = {}
     for room in current_user.rooms:
-        json_data["rooms"][room.roomname] = url_for("main.room_view", room_id = room.id)
+        json_data["rooms"][room.roomname] = url_for("main.room_api", room_id = room.id)
     resp = Response(json.dumps(json_data))
     resp.content_type = "application/json"
     
@@ -37,6 +37,7 @@ def room_api(room_id):
     json_data["Message"] = "Index page"
     json_data["name"] = current_user.name
     json_data["uname"] = current_user.username
+    json_data["roomname"] = room.roomname
 
     json_data["members"] = {}
     for member in room.members:
@@ -61,6 +62,7 @@ def create_room_api():
     except Exception as e:
         resp_data["Status"] = "Failed"
         resp_data["Message"] = "Something went wrong!"
+    resp_data["302"] = url_for("main.room_api", room_id = room.id)
     resp = Response(json.dumps(resp_data))
     resp.content_type = "application/json"
     return resp

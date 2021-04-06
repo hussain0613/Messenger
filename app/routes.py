@@ -2,7 +2,7 @@ from flask import Blueprint
 from .views import (index, room_view, create_room, delete_room, invite_members, invitations, accept_invitation, get_msg_json, send_msgs_json,
                 check_room, check, delete_room, remove_member, make_admin, rename_room)
 
-from .api import (index_api, create_room_api)
+from .api import (index_api, create_room_api, room_api)
 
 main = Blueprint('main', __name__)
 
@@ -28,5 +28,6 @@ main.route('/room/<int:room_id>/rename/', methods=["POST"])(rename_room)
 
 
 main.route("/api/index/")(index_api)
-main.route('/create_room_api/', methods = ['POST'])(create_room_api)
+main.route('/api/create_room/', methods = ['POST'])(create_room_api)
+main.route("/api/room_view/")(room_api)
 
