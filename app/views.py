@@ -237,6 +237,7 @@ def check_room(room_id):
     
     msgs = Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ).all()
     while time.time()-t < 15 and not msgs:
+        time.sleep(.1)
         msgs = Message.query.filter( and_( text(f'message.room_id = {room_id}'), text(f'message.id > {last_msg_id}') ) ).all()
     if msgs:
         code = '200'
@@ -257,6 +258,7 @@ def check():
         P2RConnection.room_id == Message.room_id, P2RConnection.user_id == current_user.id, P2RConnection.status != 'seen'
         )).all()
     while time.time()-t < 15 and not msgs:
+        time.sleep(.1)
         msgs = db.session.query(Message, Receivers, P2RConnection).filter(and_(
         Message.id == Receivers.message_id, Receivers.receiver_id == current_user.id, Message.timestamp > last_update_ts,
         P2RConnection.room_id == Message.room_id, P2RConnection.user_id == current_user.id, P2RConnection.status != 'seen'
